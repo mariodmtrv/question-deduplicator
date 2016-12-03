@@ -1,2 +1,2 @@
-# semeval-answers
+# question-deduplicator
 Semeval Task3 Playground
