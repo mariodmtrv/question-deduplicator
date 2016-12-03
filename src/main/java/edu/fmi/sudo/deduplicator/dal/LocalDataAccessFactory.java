@@ -1,3 +1,6 @@
+/**
+ * @author Mario Dimitrov
+ */
 package edu.fmi.sudo.deduplicator.dal;
 
 import java.net.UnknownHostException;
