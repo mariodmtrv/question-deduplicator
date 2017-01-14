@@ -14,12 +14,8 @@ public class LocalDataAccessFactory extends DataAccessFactory {
 
     @Override
     public void prepareDB() {
-        try {
-            MongoClient mongo = new MongoClient(url, port);
-            DB db = mongo.getDB(DataAccessFactory.DATABASE_NAME);
-            this.database = db;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        MongoClient mongo = new MongoClient(url, port);
+        DB db = mongo.getDB(DataAccessFactory.DATABASE_NAME);
+        this.database = db;
     }
 }
