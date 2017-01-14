@@ -15,16 +15,14 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Miroslav Kramolinski
  */
 public class XMLReader {
     public static List<QuestionAnswers> readFile(String filename) {
-        List<QuestionAnswers> questionAnswers = new ArrayList<>();
+        Map<String, QuestionAnswers> questionAnswers = new HashMap<>(); // Pair of ORGQ_ID and the QuestionAnswer object
 
         try {
             File input = new File(filename);
@@ -50,17 +48,16 @@ public class XMLReader {
                     getRelatedCommentsData(threadElement, false)
                 );
 
-                questionAnswers.add(new QuestionAnswers(originalQuestion, thread));
+                if(questionAnswers.containsKey(originalQuestion.getId()))
+                    questionAnswers.get(originalQuestion.getId()).addThread(thread);
+                else
+                    questionAnswers.put(originalQuestion.getId(), new QuestionAnswers(originalQuestion, thread));
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException|IOException|SAXException e) {
             e.printStackTrace();
         }
 
-        return questionAnswers;
+        return new ArrayList<QuestionAnswers>(questionAnswers.values());
     }
 
     private static RelatedQuestion getRelatedQuestionData(Element thread) {

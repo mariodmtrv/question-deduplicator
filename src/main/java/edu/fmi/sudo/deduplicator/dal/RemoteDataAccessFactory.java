@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 public class RemoteDataAccessFactory extends DataAccessFactory {
     private final String url = "";
@@ -16,13 +17,7 @@ public class RemoteDataAccessFactory extends DataAccessFactory {
     @Override
     public void prepareDB() {
         MongoClient mongoClient = null;
-        try {
-            mongoClient = new MongoClient();
-            DB db = mongoClient.getDB(DataAccessFactory.DATABASE_NAME);
-            boolean auth = db.authenticate("username", "password".toCharArray());
-            this.database = db;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        mongoClient = new MongoClient();
+        MongoDatabase db = mongoClient.getDatabase(DataAccessFactory.DATABASE_NAME);
     }
 }

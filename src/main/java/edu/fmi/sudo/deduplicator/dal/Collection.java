@@ -16,5 +16,4 @@ public enum Collection {
     public String getName() {
         return name;
     }
-
 }
