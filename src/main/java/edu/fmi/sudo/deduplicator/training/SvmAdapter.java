@@ -10,9 +10,10 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class SvmAdapter {
-    public void execute(String executablePath) {
+    protected String executablePath;
+    public void execute() {
         try {
-            Runtime.getRuntime().exec(executablePath, null, new File("c:\\program files\\test\\"));
+            Runtime.getRuntime().exec(this.executablePath, null, new File(new File(this.executablePath).getParent()));
         } catch (IOException e) {
             e.printStackTrace();
         }

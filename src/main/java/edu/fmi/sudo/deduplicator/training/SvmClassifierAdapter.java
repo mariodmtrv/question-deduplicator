@@ -6,5 +6,7 @@
 package edu.fmi.sudo.deduplicator.training;
 
 public class SvmClassifierAdapter extends SvmAdapter {
-    private String executablePath;
+    public SvmClassifierAdapter() {
+        this.executablePath = "";
+    }
 }
