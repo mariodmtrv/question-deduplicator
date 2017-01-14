@@ -5,5 +5,6 @@
  */
 package edu.fmi.sudo.deduplicator.training;
 
-public class ModelTrainer {
+public class SvmClassifierAdapter extends SvmAdapter {
+    private String executablePath;
 }
