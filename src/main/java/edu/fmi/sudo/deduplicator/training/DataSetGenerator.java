@@ -7,4 +7,19 @@
 package edu.fmi.sudo.deduplicator.training;
 
 public class DataSetGenerator {
+    private String rootPath = "src\\main\\resources\\";
+    private DataSetType dataSetType;
+
+    enum DataSetType {
+        TRAIN("test\\vector-%s.test"), TEST("train\\vector-%s.train");
+        String pattern;
+
+        DataSetType(String pattern) {
+            this.pattern = pattern;
+        }
+    }
+
+    public DataSetGenerator(DataSetType dataSetType) {
+
+    }
 }

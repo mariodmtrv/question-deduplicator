@@ -4,10 +4,12 @@
  * Author     :  Mario Dimitrov
  */
 
-package edu.fmi.sudo.deduplicator.models.semantic_features;
+package edu.fmi.sudo.deduplicator.models.semanticfeatures;
 
-import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SampleSemanticFeature extends Feature {
     public SampleSemanticFeature() {
@@ -16,6 +18,6 @@ public class SampleSemanticFeature extends Feature {
 
     @Override
     public void process() {
-        this.featureValue = "1";
+        this.featureValue = Arrays.asList("1", "1", "2");
     }
 }

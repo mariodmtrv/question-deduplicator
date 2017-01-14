@@ -7,7 +7,7 @@
 package edu.fmi.sudo.deduplicator.models;
 
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
-import edu.fmi.sudo.deduplicator.models.semantic_features.SampleSemanticFeature;
+import edu.fmi.sudo.deduplicator.models.semanticfeatures.SampleSemanticFeature;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,10 +27,11 @@ public class FeatureVector {
         features.forEach(f -> f.process());
     }
 
-    public String toString() {
-        return features.stream()
-                .map(f -> f.toString())
-                .reduce((a, b) -> a + "," + b).get();
+    public List<String> toMatrix() {
+        return null;
+//        return features.stream()
+//                .map(f -> f.toString())
+//                .reduce((a, b) -> a + "," + b).get();
     }
 
     public String getFeaturesUsedList() {

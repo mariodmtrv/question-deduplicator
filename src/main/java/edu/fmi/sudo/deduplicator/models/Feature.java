@@ -8,10 +8,11 @@ package edu.fmi.sudo.deduplicator.models;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 
 import java.io.Serializable;
+import java.util.List;
 
-public abstract class Feature implements Serializable {
+public abstract class Feature{
     protected QuestionAnswers questionAnswers;
-    protected String featureValue;
+    protected List<String> featureValue;
 
     public Feature() {
     }
@@ -22,7 +23,11 @@ public abstract class Feature implements Serializable {
 
     public abstract void process();
 
-    public String toString() {
+    /**
+     * Produces A list of values per every triple
+     * QorigQ1relA1rel,..QorigQ1relAnrel...,QorigQ2relA1rel...
+     * */
+    public List<String> toVector() {
         if (featureValue == null) {
             this.process();
         }
