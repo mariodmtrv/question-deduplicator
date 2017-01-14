@@ -11,9 +11,9 @@ import java.io.IOException;
 
 public abstract class SvmAdapter {
     protected String executablePath;
-    public void execute() {
+    public void execute(String[] params) {
         try {
-            Runtime.getRuntime().exec(this.executablePath, null, new File(new File(this.executablePath).getParent()));
+            Runtime.getRuntime().exec(this.executablePath, params, new File(new File(this.executablePath).getParent()));
         } catch (IOException e) {
             e.printStackTrace();
         }
