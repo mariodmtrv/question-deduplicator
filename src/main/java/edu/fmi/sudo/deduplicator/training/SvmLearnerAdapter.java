@@ -6,9 +6,8 @@
 
 package edu.fmi.sudo.deduplicator.training;
 
-import java.io.File;
-import java.io.IOException;
-
 public class SvmLearnerAdapter extends SvmAdapter {
-    private String executablePath="../resources/modules/svm/svm_rank_learn.exe";
+    public SvmLearnerAdapter() {
+        this.executablePath = "src\\main\\resources\\modules\\svm\\svm_rank_learn.exe";
+    }
 }
