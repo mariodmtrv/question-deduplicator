@@ -13,6 +13,6 @@ public class SvmTest {
     @Test
     public void testSvm(){
         SvmLearnerAdapter learnerAdapter = new SvmLearnerAdapter();
-        learnerAdapter.execute();
+        learnerAdapter.execute(null);
     }
 }
