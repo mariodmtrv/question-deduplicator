@@ -2,6 +2,7 @@ package edu.fmi.sudo.deduplicator;
 
 import edu.fmi.sudo.deduplicator.dal.XMLReader;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
+import edu.fmi.sudo.deduplicator.evaluation.Evaluator;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -18,5 +19,10 @@ public class Main {
         for(QuestionAnswers qa: data) {
             System.out.println(qa.getQuestion().getId());
         }
+
+        String pathToSVM = ".\\predictions";
+        Evaluator evaluator = new Evaluator();
+        //data should be the original question-related question pairs, ordered as in the file with the predictions.
+        evaluator.evaluate(data, pathToSVM, "android");
     }
 }
