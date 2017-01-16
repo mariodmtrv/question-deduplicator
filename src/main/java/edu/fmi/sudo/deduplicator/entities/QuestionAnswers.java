@@ -67,4 +67,8 @@ public class QuestionAnswers {
         else
             relatedThreads.add(thread);
     }
+
+    public List<Thread> getThreads() {
+        return this.relatedThreads;
+    }
 }
