@@ -35,4 +35,12 @@ public class OriginalQuestion implements Question {
     public String getBody() {
         return body;
     }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 }

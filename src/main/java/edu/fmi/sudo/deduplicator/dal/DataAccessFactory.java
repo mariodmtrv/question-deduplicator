@@ -7,6 +7,9 @@
 package edu.fmi.sudo.deduplicator.dal;
 
 import com.mongodb.DB;
+import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
+
+import java.util.List;
 
 public abstract class DataAccessFactory {
     protected static final String DATABASE_NAME = "deduplication";
@@ -17,5 +20,9 @@ public abstract class DataAccessFactory {
     public void addObject(Collection collection){
         database.getCollection(collection.getName());
 
+    }
+
+    public List<QuestionAnswers> getAllObjects() {
+        return null;
     }
 }

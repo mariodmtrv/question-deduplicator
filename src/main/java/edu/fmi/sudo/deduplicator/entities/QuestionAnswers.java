@@ -28,7 +28,18 @@ public class QuestionAnswers {
         return question;
     }
 
-    public List<RelatedAnswer> getRelatedAnswer(String threadId) {
+    public void setQuestion(OriginalQuestion question) {
+        this.question = question;
+    }
+
+    public List<RelatedAnswer> getAllRelatedAnswers() {
+        List<RelatedAnswer> answers = new ArrayList<>();
+        relatedThreads.stream().forEach(t -> answers.addAll(t.getRelatedAnswers()));
+
+        return answers;
+    }
+
+    public List<RelatedAnswer> getRelatedAnswers(String threadId) {
         for(Thread thread : relatedThreads) {
             if(thread.getId().equals(threadId))
                 return thread.getRelatedAnswers();
@@ -46,12 +57,26 @@ public class QuestionAnswers {
         return null;
     }
 
+    public List<RelatedComment> getAllRelatedComments() {
+        List<RelatedComment> relatedComments = new ArrayList<>();
+        relatedThreads.stream().forEach(t -> relatedComments.addAll(t.getRelatedComments()));
+
+        return relatedComments;
+    }
+
     public List<RelatedComment> getRelatedComments(String threadId) {
         for(Thread thread: relatedThreads)
             if(thread.getId().equals(threadId))
                 return thread.getRelatedComments();
 
         return null;
+    }
+
+    public List<RelatedQuestion> getAllRelatedQuestions() {
+        List<RelatedQuestion> questions = new ArrayList<>();
+        relatedThreads.stream().forEach(t -> questions.add(t.getRelatedQuestion()));
+
+        return questions;
     }
 
     public static <T extends Related> Object getRelated() {

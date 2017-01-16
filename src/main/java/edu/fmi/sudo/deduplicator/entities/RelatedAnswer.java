@@ -99,6 +99,10 @@ public class RelatedAnswer implements Comment, Related {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public List<RelatedComment> getRelatedComments() {
         return relatedComments;
     }

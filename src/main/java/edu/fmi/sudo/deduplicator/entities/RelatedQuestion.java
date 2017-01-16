@@ -73,9 +73,17 @@ public class RelatedQuestion implements Question, Related {
         return subject;
     }
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
     @Override
     public String getBody() {
         return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     @Override

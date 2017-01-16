@@ -71,6 +71,10 @@ public class RelatedComment implements Comment, Related {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     // Always empty
     @Override
     public Relevance getRelevanceToRelated() {
