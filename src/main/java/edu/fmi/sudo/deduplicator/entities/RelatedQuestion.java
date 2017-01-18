@@ -58,6 +58,10 @@ public class RelatedQuestion implements Question, Related {
         this.body = body;
     }
 
+    public RelatedQuestion() {
+
+    }
+
     @Override
     public String getId() {
         return id.split("_")[1].substring(1);
