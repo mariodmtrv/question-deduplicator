@@ -1,6 +1,7 @@
 package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
 import edu.fmi.sudo.deduplicator.GateWrapper;
+import edu.fmi.sudo.deduplicator.entities.RelatedQuestion;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import gate.Corpus;
 import gate.CorpusController;
@@ -40,36 +41,42 @@ public abstract  class PosTaggingFeature extends Feature {
             Document orgQuestionBodyDoc = Factory.newDocument(
                     this.questionAnswers.getQuestion().getBody());
 
-            Document relQuestionSubjectDoc = Factory.newDocument(
-                    this.questionAnswers.getQuestion().getSubject());
-            Document relQuestionBodyDoc = Factory.newDocument(
-                    this.questionAnswers.getQuestion().getBody());
-
-
             // put the document in the corpus
             corpus.add(orgQuestionSubjectDoc);
             corpus.add(orgQuestionBodyDoc);
-            corpus.add(relQuestionSubjectDoc);
-            corpus.add(relQuestionBodyDoc);
 
-            // run the application
             application.execute();
 
-            //Process annotations
-            processFeatureMetrics(
-                    orgQuestionSubjectDoc,
-                    orgQuestionBodyDoc,
-                    relQuestionSubjectDoc,
-                    relQuestionBodyDoc);
-
-            // remove the document from the corpus again
             corpus.clear();
+
+            for (RelatedQuestion rq : this.questionAnswers.getAllRelatedQuestions()) {
+                Document relQuestionSubjectDoc = Factory.newDocument(
+                        rq.getSubject());
+                Document relQuestionBodyDoc = Factory.newDocument(
+                        rq.getBody());
+
+                corpus.add(relQuestionSubjectDoc);
+                corpus.add(relQuestionBodyDoc);
+
+                application.execute();
+
+                //Process annotations
+                String vector = processFeatureMetrics(
+                        orgQuestionSubjectDoc,
+                        orgQuestionBodyDoc,
+                        relQuestionSubjectDoc,
+                        relQuestionBodyDoc);
+
+                this.featureValue.add(vector);
+
+                corpus.clear();
+
+                Factory.deleteResource(relQuestionBodyDoc);
+                Factory.deleteResource(relQuestionSubjectDoc);
+            }
 
             Factory.deleteResource(orgQuestionBodyDoc);
             Factory.deleteResource(orgQuestionSubjectDoc);
-            Factory.deleteResource(relQuestionBodyDoc);
-            Factory.deleteResource(relQuestionSubjectDoc);
-
         } catch (GateException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -77,7 +84,7 @@ public abstract  class PosTaggingFeature extends Feature {
         }
     }
 
-    public abstract void processFeatureMetrics(
+    public abstract String processFeatureMetrics(
         Document orgQuestionSubjectDoc,
         Document orgQuestionBodyDoc,
         Document relQuestionSubjectDoc,

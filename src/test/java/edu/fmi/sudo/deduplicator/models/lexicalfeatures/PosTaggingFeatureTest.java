@@ -14,31 +14,31 @@ import java.util.Arrays;
 /**
  * Created by mateev on 18.1.2017 г..
  */
-public class PosTaggingProportionsFeatureTest {
+public class PosTaggingFeatureTest {
 
     @Test
-    public void testPosTagging() {
+    public void testPosTaggingNounOverlap() {
 
         RelatedQuestion r1 = new RelatedQuestion();
         r1.setSubject("How to cook a pie?");
         r1.setBody("Can someone tell me how to cook a big pie?");
 
         RelatedQuestion r2 = new RelatedQuestion();
-        r1.setSubject("Need help for choosing a car.");
-        r1.setBody("I don't have experience and I need a car maniac to choose car for me.");
+        r2.setSubject("Need help for choosing a car.");
+        r2.setBody("I don't have experience and I need a car maniac to choose car for me. I'll bake him a pie.");
 
         Thread t1 = new Thread("oq1_r1", r1, null, null);
         Thread t2 = new Thread("oq1_r2", r2, null, null);
 
         OriginalQuestion oq1 = new OriginalQuestion("oq1",
                 "Receipt for cooking a pie.",
-                "I don't have a receipt so can you give me one?");
+                "I don't have a receipt for a pie so can you give me one?");
 
         QuestionAnswers qa = new QuestionAnswers(oq1, Arrays.asList(t1, t2));
 
-        PosTaggingProportionsFeature feature = new PosTaggingProportionsFeature();
+        PosTaggingNounOverlapFeature feature = new PosTaggingNounOverlapFeature();
         feature.setQuestionAnswers(qa);
 
-        feature.process();
+        feature.toVector();
     }
 }

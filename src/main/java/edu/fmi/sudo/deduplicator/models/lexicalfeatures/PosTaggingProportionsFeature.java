@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class PosTaggingProportionsFeature extends PosTaggingFeature {
 
     @Override
-    public void processFeatureMetrics(
+    public String processFeatureMetrics(
             Document orgQuestionSubjectDoc,
             Document orgQuestionBodyDoc,
             Document relQuestionSubjectDoc,
@@ -28,5 +28,6 @@ public class PosTaggingProportionsFeature extends PosTaggingFeature {
 
 //        doc.getAnnotations()
 //                .get("Token", hm);
+        return "";
     }
 }
