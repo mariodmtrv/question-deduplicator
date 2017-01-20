@@ -35,5 +35,10 @@ public class PosTaggingProportionsFeatureTest {
                 "I don't have a receipt so can you give me one?");
 
         QuestionAnswers qa = new QuestionAnswers(oq1, Arrays.asList(t1, t2));
+
+        PosTaggingProportionsFeature feature = new PosTaggingProportionsFeature();
+        feature.setQuestionAnswers(qa);
+
+        feature.process();
     }
 }
