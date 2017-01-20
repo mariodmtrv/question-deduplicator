@@ -1,5 +1,7 @@
 package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
+import edu.fmi.sudo.deduplicator.pipeline.TokenizationFilter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,10 +11,20 @@ public class IntersectionFinder {
     Set<String> sourceEntityWordsSet;
     List<String> sourceEntityWords;
     int nGramLength;
+    boolean shouldNormalize;
 
-    public IntersectionFinder(List<String> sourceEntityWords, int nGramLength) {
-        this.sourceEntityWords = sourceEntityWords;
+    public IntersectionFinder(int nGramLength, boolean shouldNormalize) {
         this.nGramLength = nGramLength;
+        this.shouldNormalize = shouldNormalize;
+    }
+
+    public void setSourceEntityWords(List<String> sourceEntityWords) {
+        this.sourceEntityWords = sourceEntityWords;
+    }
+
+    public void setSourceEntityWords(String entity) {
+
+        this.sourceEntityWords = TokenizationFilter.tokenizeEntity(entity);
     }
 
     private Set<String> createSet() {
@@ -36,14 +48,23 @@ public class IntersectionFinder {
         return nGrams;
     }
 
-    public Long getIntersectionSize(List<String> targetWords) {
+    public Double getIntersectionSize(List<String> targetWords) {
         if (sourceEntityWordsSet == null) {
             sourceEntityWordsSet = createSet();
         }
         List<String> targetNgrams = createNgrams(targetWords);
-        return targetNgrams.stream()
+        Double intersectionSize = ((Long) (targetNgrams.stream()
                 .filter(ngram -> sourceEntityWordsSet
-                        .contains(ngram)).count();
+                        .contains(ngram)).count())).doubleValue();
+        if (shouldNormalize) {
+            intersectionSize /= targetNgrams.size();
+        }
+        return intersectionSize;
+    }
+
+    public Double getIntersectionSize(String target) {
+        List<String> tokenizedTarget = TokenizationFilter.tokenizeEntity(target);
+        return getIntersectionSize(tokenizedTarget);
     }
 
 }

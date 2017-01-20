@@ -1,22 +1,13 @@
-/**
- * Copyright 2017 (C) Endrotech
- * Created on :  1/14/2017
- * Author     :  Mario Dimitrov
- */
-
 package edu.fmi.sudo.deduplicator.models;
 
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
-import edu.fmi.sudo.deduplicator.models.semanticfeatures.SampleSemanticFeature;
+import edu.fmi.sudo.deduplicator.models.lexicalfeatures.BiGramsFeature;
+import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class FeatureVector {
-    List<Feature> features = Collections.unmodifiableList(Arrays.asList(new SampleSemanticFeature()));
-
+    List<Feature> features;
     public FeatureVector(QuestionAnswers qa) {
         features.forEach(f -> {
             f.setQuestionAnswers(qa);
@@ -27,11 +18,16 @@ public class FeatureVector {
         features.forEach(f -> f.process());
     }
 
-    public List<String> toMatrix() {
-        return null;
-//        return features.stream()
-//                .map(f -> f.toString())
-//                .reduce((a, b) -> a + "," + b).get();
+    private List<String> toMatrix() {
+        List<String> matrix = new ArrayList<>();
+        int entriesCount = features.get(0).featureValue.size();
+        for (int index = 0; index < entriesCount; index++) {
+            StringBuilder entryResult = new StringBuilder();
+            final int id = index;
+            features.stream().forEach(feature -> entryResult.append(feature.getEntryValue(id) + ", "));
+            matrix.add(entryResult.toString());
+        }
+        return matrix;
     }
 
     public String getFeaturesUsedList() {
@@ -40,5 +36,12 @@ public class FeatureVector {
             return list[list.length - 1];
         }).reduce((a, b) -> a.toString() + ", " + b.toString());
         return result.get();
+    }
+
+    public List<String> getValues() {
+        return toMatrix();
+    }
+    public void setFeatures( List<Feature> features){
+        this.features = features;
     }
 }

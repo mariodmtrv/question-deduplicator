@@ -5,5 +5,6 @@ public enum PipelineFeature {
     SPECIALIZED_STOPWORDS_REMOVAL,
     POS_TAGGING,
     WSD,
-    MAGIC_WORDS
+    MAGIC_WORDS,
+    TOKENIZATION
 }

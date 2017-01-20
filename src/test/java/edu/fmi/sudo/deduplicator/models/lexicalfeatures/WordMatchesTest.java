@@ -1,10 +1,4 @@
-/**
- * Copyright 2017 (C) Endrotech
- * Created on :  1/14/2017
- * Author     :  Mario Dimitrov
- */
-
-package edu.fmi.sudo.deduplicator;
+package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.IntersectionFinder;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
@@ -15,7 +9,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class FeaturesTest {
+public class WordMatchesTest {
     @Test
     public void testMatchingWordsFeature() {
         MatchingWordsFeature wordsFeature = new MatchingWordsFeature();
@@ -23,13 +17,18 @@ public class FeaturesTest {
     }
 
     @Test
+    public void testBiGramsFeature() {
+        BiGramsFeature wordsFeature = new BiGramsFeature();
+        wordsFeature.process();
+    }
+
+    @Test
     public void testIntersectionFinder() {
         IntersectionFinder finder
-                = new IntersectionFinder(
-                Arrays.asList("This is a red car".split(" ")), 2);
-        Long size = finder
-                .getIntersectionSize(
-                        Arrays.asList("That is a red car too".split(" ")));
-        assert (size == 2);
+                = new IntersectionFinder(2, false);
+        finder.setSourceEntityWords("This is a red car");
+        Double size = finder
+                .getIntersectionSize("That is a red car too");
+        assert (size - 2.0 < 0.001);
     }
 }
