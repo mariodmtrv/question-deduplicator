@@ -8,6 +8,7 @@ package edu.fmi.sudo.deduplicator.models;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Feature{
@@ -29,6 +30,7 @@ public abstract class Feature{
      * */
     public List<String> toVector() {
         if (featureValue == null) {
+            this.featureValue = new ArrayList<>();
             this.process();
         }
         return featureValue;
