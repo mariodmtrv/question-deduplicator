@@ -38,17 +38,6 @@ public class PosTaggingNounOverlapFeature extends PosTaggingFeature {
         return  vector;
     }
 
-    private String getNormalizedVector(List<Double> values) {
-        Double mean = values.stream().mapToDouble(x -> x).average().getAsDouble();
-        double diff = values.stream().max(Double::compareTo).get()
-                - values.stream().min(Double::compareTo).get();
-
-        return values.stream()
-                .map(v -> diff == 0 ? 0 : (v - mean) / diff)
-                .map(v -> Double.toString(v))
-                .collect(Collectors.joining(" "));
-    }
-
     private List<Double> calculateNounOverlapValues(Document doc1, Document doc2) {
         SimpleFeatureMapImpl hm = new SimpleFeatureMapImpl();
         hm.put("category", "NN");
