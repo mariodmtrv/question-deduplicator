@@ -3,10 +3,8 @@
  */
 package edu.fmi.sudo.deduplicator.dal;
 
-import java.net.UnknownHostException;
-
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 public class LocalDataAccessFactory extends DataAccessFactory {
     private final String url = "localhost";
@@ -15,7 +13,6 @@ public class LocalDataAccessFactory extends DataAccessFactory {
     @Override
     public void prepareDB() {
         MongoClient mongo = new MongoClient(url, port);
-        DB db = mongo.getDB(DataAccessFactory.DATABASE_NAME);
-        this.database = db;
+        this.database = mongo.getDatabase(DataAccessFactory.DATABASE_NAME);
     }
 }
