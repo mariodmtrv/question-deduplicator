@@ -1,16 +1,13 @@
 package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
-import edu.fmi.sudo.deduplicator.entities.*;
+import edu.fmi.sudo.deduplicator.entities.OriginalQuestion;
+import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
+import edu.fmi.sudo.deduplicator.entities.RelatedQuestion;
 import edu.fmi.sudo.deduplicator.entities.Thread;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.IntersectionFinder;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
 
 public class WordMatchesTest {
     private QuestionAnswers qa;

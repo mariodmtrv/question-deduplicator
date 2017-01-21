@@ -6,11 +6,9 @@
 
 package edu.fmi.sudo.deduplicator.models;
 
-import edu.fmi.sudo.deduplicator.dal.Collection;
 import edu.fmi.sudo.deduplicator.entities.RelatedQuestion;
 import edu.fmi.sudo.deduplicator.entities.Relevance;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class TrainDataLabel extends Feature {

@@ -37,21 +37,21 @@ public class MatchingWordsFeature extends Feature {
             Double questionCommentsIntersection = getCommentsIntersectionSize(thread.getRelatedComments());
             Double questionValue = questionIntersection + questionCommentsIntersection;
             List<RelatedAnswer> answers = thread.getRelatedAnswers();
+            Double answerValue = 0.0;
+            featureValue.add(questionValue.toString());
             if (answers != null) {
                 for (RelatedAnswer answer : answers) {
                     Double answerIntersection = intersectionFinder.getIntersectionSize(answer.getText());
                     Double answerCommentsIntersection = getCommentsIntersectionSize(answer.getRelatedComments());
-                    Double answerValue = answerIntersection + answerCommentsIntersection;
-                    featureValue.add(questionValue + ", " + answerValue);
+                    answerValue += (answerIntersection + answerCommentsIntersection);
                 }
-            } else {
-                featureValue.add(questionValue.toString());
+                featureValue.add(", " + answerValue);
             }
         }
     }
 
     private Double getCommentsIntersectionSize(List<RelatedComment> comments) {
-        if(comments == null){
+        if (comments == null) {
             return 0.0;
         }
         return comments.stream()
