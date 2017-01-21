@@ -12,6 +12,10 @@ import gate.util.persistence.PersistenceManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by mateev on 19.1.2017 г..
@@ -90,4 +94,18 @@ public abstract  class PosTaggingFeature extends Feature {
         Document relQuestionSubjectDoc,
         Document relQuestionBodyDoc
     );
+
+    protected String getNormalizedVector(List<Double> values) {
+        Double mean = values.stream().mapToDouble(x -> x).average().getAsDouble();
+        double diff = values.stream().max(Double::compareTo).get()
+                - values.stream().min(Double::compareTo).get();
+
+        DecimalFormat df = new DecimalFormat("#.####");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        return values.stream()
+                .map(v -> diff == 0 ? 0 : (v - mean) / diff)
+                .map(v -> df.format(v))
+                .collect(Collectors.joining(" "));
+    }
 }
