@@ -4,6 +4,7 @@ import edu.fmi.sudo.deduplicator.dal.DataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
+import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.BiGramsFeature;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
@@ -61,26 +62,31 @@ public class MainPipeline {
 
     // multithreaded execution...
 
-    public void trainModel(List<QuestionAnswers> questionAnswers) {
+    public void trainModel() {
         DataSetGenerator trainSetGenerator = new DataSetGenerator(DataSetType.TRAIN, executionIdentifier);
-        questionAnswers.stream().forEach(questionAnswer -> {
+        QuestionAnswers questionAnswer = null;
+        while ((questionAnswer = daf.getAllObjects().get(0)) != null) {
+
             FeatureVector featureVector = new FeatureVector(questionAnswer);
-            featureVector.setFeatures(features);
+            List<Feature> trainingFeatures = features;
+            trainingFeatures.add(new TrainDataLabel());
+            featureVector.setFeatures(trainingFeatures);
             featureVector.process();
             trainSetGenerator.writeEntry(featureVector.getValues());
-        });
+        }
         SvmLearnerAdapter learner = new SvmLearnerAdapter(executionIdentifier);
         learner.execute();
     }
 
-    public void testGeneratedModel(List<QuestionAnswers> questionAnswers) {
+    public void testGeneratedModel() {
         DataSetGenerator testSetGenerator = new DataSetGenerator(DataSetType.TEST, executionIdentifier);
-        questionAnswers.stream().forEach(questionAnswer -> {
+        QuestionAnswers questionAnswer = null;
+        while ((questionAnswer = daf.getAllObjects().get(0)) != null) {
             FeatureVector featureVector = new FeatureVector(questionAnswer);
             featureVector.setFeatures(features);
             featureVector.process();
             testSetGenerator.writeEntry(featureVector.getValues());
-        });
+        }
         SvmClassifierAdapter classifier = new SvmClassifierAdapter(executionIdentifier);
         classifier.execute();
     }
