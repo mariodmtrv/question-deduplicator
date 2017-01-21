@@ -24,6 +24,7 @@ public class RelatedQuestion implements Question, Related {
     private Integer userId;
     private String username;
 
+    private List<String> tokens;
 
     /*
      * Structure of a related question
@@ -129,4 +130,14 @@ public class RelatedQuestion implements Question, Related {
     public Integer getViewCount() {
         return viewCount;
     }
+
+    @Override
+    public List<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<String> tokens) {
+        this.tokens = tokens;
+    }
+
 }

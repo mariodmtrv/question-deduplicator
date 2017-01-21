@@ -11,6 +11,7 @@ public class BiGramsFeature extends MatchingWordsFeature {
         super();
         this.intersectionFinder = new IntersectionFinder(2, true);
     }
+
     @Override
     public void process() {
         findIntersectionSizes(this.intersectionFinder);

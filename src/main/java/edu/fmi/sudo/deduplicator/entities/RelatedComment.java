@@ -1,6 +1,7 @@
 package edu.fmi.sudo.deduplicator.entities;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Miroslav Kramolinski
@@ -21,6 +22,7 @@ public class RelatedComment implements Comment, Related {
      * Structure of a related comment
      */
     private String text;
+    private List<String> textTokens;
 
     public RelatedComment(String id, Date date, Integer userId, String username, Integer score, String text) {
         this.id = id;
@@ -84,5 +86,14 @@ public class RelatedComment implements Comment, Related {
     // Always empty
     public Relevance getRelevanceToOriginalQuestion() {
         return null;
+    }
+
+    @Override
+    public List<String> getTextTokens() {
+        return textTokens;
+    }
+
+    public void setTextTokens(List<String> textTokens) {
+        this.textTokens = textTokens;
     }
 }

@@ -23,6 +23,7 @@ public class RelatedAnswer implements Comment, Related {
      * Structure of a related answer
      */
     private String text;
+    private List<String> textTokens;
     List<RelatedComment> relatedComments;
 
     public RelatedAnswer(
@@ -99,11 +100,20 @@ public class RelatedAnswer implements Comment, Related {
         return text;
     }
 
+    @Override
+    public List<String> getTextTokens() {
+        return this.textTokens;
+    }
+
     public void setText(String text) {
         this.text = text;
     }
 
     public List<RelatedComment> getRelatedComments() {
         return relatedComments;
+    }
+
+    public void setTextTokens(List<String> textTokens) {
+        this.textTokens = textTokens;
     }
 }

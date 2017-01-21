@@ -27,13 +27,14 @@ public class MatchingWordsFeature extends Feature {
     protected void findIntersectionSizes(IntersectionFinder intersectionFinder) {
         this.featureValue = new ArrayList<>();
         OriginalQuestion originalQuestion = this.questionAnswers.getQuestion();
-        intersectionFinder.setSourceEntityWords(originalQuestion.getSubject() + " " + originalQuestion.getBody());
+        List<String> originalQuestionTokens = originalQuestion.getTokens();
+        intersectionFinder.setSourceEntityWords(originalQuestionTokens);
         List<Thread> threads = this.questionAnswers.getThreads();
         for (Thread thread : threads) {
+            List<String> relatedQuestionTokens = thread.getRelatedQuestion().getTokens();
             Double questionIntersection =
                     intersectionFinder
-                            .getIntersectionSize(thread.getRelatedQuestion().getSubject() + " " +
-                                    thread.getRelatedQuestion().getBody());
+                            .getIntersectionSize(relatedQuestionTokens);
             Double questionCommentsIntersection = getCommentsIntersectionSize(thread.getRelatedComments());
             Double questionValue = questionIntersection + questionCommentsIntersection;
             List<RelatedAnswer> answers = thread.getRelatedAnswers();

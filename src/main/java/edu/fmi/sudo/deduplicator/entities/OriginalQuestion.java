@@ -1,5 +1,7 @@
 package edu.fmi.sudo.deduplicator.entities;
 
+import java.util.List;
+
 /**
  * @author Miroslav Kramolinski
  */
@@ -14,7 +16,7 @@ public class OriginalQuestion implements Question {
      */
     private String subject;
     private String body;
-
+    private List<String> tokens;
     public OriginalQuestion(String id, String subject, String body) {
         this.id = id;
         this.subject = subject;
@@ -43,4 +45,12 @@ public class OriginalQuestion implements Question {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-}
+
+    @Override
+    public List<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<String> tokens) {
+        this.tokens = tokens;
+    }}
