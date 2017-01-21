@@ -12,7 +12,7 @@ import org.junit.Test;
 public class SvmTest {
     @Test
     public void testSvm(){
-        SvmLearnerAdapter learnerAdapter = new SvmLearnerAdapter();
-        learnerAdapter.execute(null);
+        SvmLearnerAdapter learnerAdapter = new SvmLearnerAdapter(123L);
+        learnerAdapter.execute();
     }
 }
