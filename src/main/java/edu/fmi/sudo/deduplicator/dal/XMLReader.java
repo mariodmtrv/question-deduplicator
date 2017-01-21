@@ -98,7 +98,7 @@ public class XMLReader {
                     df.parse(element.getAttribute("RELA_DATE")),
                     Integer.parseInt(element.getAttribute("RELA_USERID")),
                     element.getAttribute("RELA_USERNAME"),
-                    Integer.parseInt("RELA_SCORE"),
+                    Integer.parseInt(element.getAttribute("RELA_SCORE")),
                     Boolean.parseBoolean(element.getAttribute("RELA_ACCEPTED")),
                     element.getElementsByTagName("RelAText").item(0).getTextContent(),
                     getRelatedCommentsData(element, true)

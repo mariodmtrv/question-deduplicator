@@ -6,14 +6,14 @@
  */
 package edu.fmi.sudo.deduplicator.dal;
 
-import com.mongodb.DB;
+import com.mongodb.client.MongoDatabase;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 
 import java.util.List;
 
 public abstract class DataAccessFactory {
     protected static final String DATABASE_NAME = "deduplication";
-    protected DB database;
+    protected MongoDatabase database;
 
     public abstract void prepareDB();
 
@@ -25,4 +25,6 @@ public abstract class DataAccessFactory {
     public List<QuestionAnswers> getAllObjects() {
         return null;
     }
+
+
 }

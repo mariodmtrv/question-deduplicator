@@ -16,8 +16,7 @@ public class RemoteDataAccessFactory extends DataAccessFactory {
 
     @Override
     public void prepareDB() {
-        MongoClient mongoClient = null;
-        mongoClient = new MongoClient();
+        MongoClient mongoClient = new MongoClient();
         MongoDatabase db = mongoClient.getDatabase(DataAccessFactory.DATABASE_NAME);
     }
 }
