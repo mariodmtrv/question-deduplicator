@@ -15,6 +15,8 @@ public class PipelineFilter {
                 return WSDFilter.process(qa);
             case MAGIC_WORDS:
                 return MagicWordsFilter.process(qa);
+            case TOKENIZATION:
+                return TokenizationFilter.process(qa);
             default:
                 throw new RuntimeException("Unrecognized feature");
         }

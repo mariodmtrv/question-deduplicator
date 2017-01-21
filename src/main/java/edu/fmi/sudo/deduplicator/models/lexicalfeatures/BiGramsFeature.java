@@ -1,20 +1,18 @@
 /**
- * Copyright 2017 (C) Endrotech
- * Created on :  1/14/2017
- * Author     :  Mario Dimitrov
+ * @author Mario Dimitrov
  */
-
 package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
-import edu.fmi.sudo.deduplicator.models.Feature;
+public class BiGramsFeature extends MatchingWordsFeature {
+    private IntersectionFinder intersectionFinder;
 
-import java.util.Arrays;
 
-public class BiGramsFeature extends Feature {
-    private IntersectionFinder intersectionFinder
-            = new IntersectionFinder(Arrays.asList("question"), 2);
-
+    public BiGramsFeature() {
+        super();
+        this.intersectionFinder = new IntersectionFinder(2, true);
+    }
     @Override
     public void process() {
+        findIntersectionSizes(this.intersectionFinder);
     }
 }
