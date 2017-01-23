@@ -1,6 +1,7 @@
 package edu.fmi.sudo.deduplicator.pipeline;
 
 import edu.fmi.sudo.deduplicator.dal.DataAccessFactory;
+import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
@@ -62,11 +63,11 @@ public class MainPipeline {
 
     // multithreaded execution...
 
-    public void trainModel() {
+    public void trainModel(LocalDataAccessFactory dataAccessFactory) {
         DataSetGenerator trainSetGenerator = new DataSetGenerator(DataSetType.TRAIN, executionIdentifier);
         QuestionAnswers questionAnswer = null;
-        while ((questionAnswer = daf.getAllObjects().get(0)) != null) {
-
+        while (dataAccessFactory.hasNextTrain()) {
+            questionAnswer = dataAccessFactory.getNextTrainEntry();
             FeatureVector featureVector = new FeatureVector(questionAnswer);
             List<Feature> trainingFeatures = features;
             trainingFeatures.add(new TrainDataLabel());
@@ -78,11 +79,12 @@ public class MainPipeline {
         learner.execute();
     }
 
-    public void testGeneratedModel() {
+    public void testGeneratedModel(LocalDataAccessFactory daf) {
         DataSetGenerator testSetGenerator = new DataSetGenerator(DataSetType.TEST, executionIdentifier);
-        QuestionAnswers questionAnswer = null;
-        while ((questionAnswer = daf.getAllObjects().get(0)) != null) {
-            FeatureVector featureVector = new FeatureVector(questionAnswer);
+        QuestionAnswers questionAnswers = null;
+        while (daf.hasNextTest()) {
+            questionAnswers = daf.getNextTestEntry();
+            FeatureVector featureVector = new FeatureVector(questionAnswers);
             featureVector.setFeatures(features);
             featureVector.process();
             testSetGenerator.writeEntry(featureVector.getValues());

@@ -19,19 +19,21 @@ public class CosSimilarityFeature extends Feature {
     public void process() {
         Map<String, Integer> originalQuestionMap =
                 generateFrequencyMap(this.questionAnswers.getQuestion().getTokens());
-        Stream<Pair> relatedQuestionsSimilarities = this.questionAnswers.getThreads().stream()
-                .map(thread -> {
-                    Double questionSimilarity =
-                            computeCosSimilarity(originalQuestionMap,
-                                    thread.getRelatedQuestion().getTokens());
-                    List<String> joinedAnswers = thread.getRelatedAnswers().stream()
-                            .map(question -> question.getTextTokens())
-                            .flatMap(x -> x.stream())
-                            .collect(Collectors.toList());
-                    Double answersSimilarity =
-                            computeCosSimilarity(originalQuestionMap, joinedAnswers);
-                    return new Pair(questionSimilarity, answersSimilarity);
-                });
+        Stream<Pair> relatedQuestionsSimilarities =
+                this.questionAnswers
+                        .getThreads().stream()
+                        .map(thread -> {
+                            Double questionSimilarity =
+                                    computeCosSimilarity(originalQuestionMap,
+                                            thread.getRelatedQuestion().getTokens());
+                            List<String> joinedAnswers = thread.getRelatedAnswers().stream()
+                                    .map(question -> question.getTextTokens())
+                                    .flatMap(x -> x.stream())
+                                    .collect(Collectors.toList());
+                            Double answersSimilarity =
+                                    computeCosSimilarity(originalQuestionMap, joinedAnswers);
+                            return new Pair(questionSimilarity, answersSimilarity);
+                        });
         List<String> normalizedQuestionSimilarities =
                 Feature.normalizeValues(relatedQuestionsSimilarities
                         .map(pair -> (Double) pair.getKey())
@@ -49,13 +51,14 @@ public class CosSimilarityFeature extends Feature {
     }
 
 
-    private Double computeCosSimilarity(Map<String, Integer> originalQuestionMap, List<String> other) {
+    private Double computeCosSimilarity(
+            Map<String, Integer> originalQuestionMap,
+            List<String> other) {
         return computeCosSimilarity(originalQuestionMap, generateFrequencyMap(other));
     }
 
     private Double computeCosSimilarity(Map<String, Integer> orig, Map<String, Integer> other) {
-        Double result = 0.0;
-        result = Double.valueOf(
+        Double result = Double.valueOf(
                 orig.entrySet().stream()
                         .map(entry -> {
                             if (other.containsKey(entry.getKey())) {
