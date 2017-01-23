@@ -2,14 +2,12 @@ package edu.fmi.sudo.deduplicator;
 
 import edu.fmi.sudo.deduplicator.config.Configuration;
 import edu.fmi.sudo.deduplicator.dal.XMLReader;
-import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.evaluation.Evaluator;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Properties;
 
 public class Main {
@@ -23,12 +21,12 @@ public class Main {
         readProperties();
 
         System.out.println("Input file set to: " + devData);
-        List<QuestionAnswers> data = XMLReader.readFile(Paths.get(devData).toString());
+        XMLReader.readFile(Paths.get(devData).toString(), true);
 
         String pathToSVM = ".\\predictions";
         Evaluator evaluator = new Evaluator();
         //data should be the original question-related question pairs, ordered as in the file with the predictions.
-        evaluator.evaluate(data, pathToSVM, "android");
+        //evaluator.evaluate(data, pathToSVM, "android");
     }
 
     private static void readProperties() {

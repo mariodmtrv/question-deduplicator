@@ -21,8 +21,10 @@ import java.util.*;
  * @author Miroslav Kramolinski
  */
 public class XMLReader {
-    public static List<QuestionAnswers> readFile(String filename) {
+    public static void readFile(String filename, boolean train) {
         Map<String, QuestionAnswers> questionAnswers = new HashMap<>(); // Pair of ORGQ_ID and the QuestionAnswer object
+        LocalDataAccessFactory daf = new LocalDataAccessFactory();
+        daf.prepareDB();
 
         try {
             File input = new File(filename);
@@ -40,6 +42,8 @@ public class XMLReader {
                     element.getElementsByTagName("OrgQBody").item(0).getTextContent()
                 );
 
+                String origId = originalQuestion.getId();
+
                 Element threadElement = (Element) element.getElementsByTagName("Thread").item(0);
                 Thread thread = new Thread(
                     threadElement.getAttribute("THREAD_SEQUENCE"),
@@ -48,16 +52,26 @@ public class XMLReader {
                     getRelatedCommentsData(threadElement, false)
                 );
 
-                if(questionAnswers.containsKey(originalQuestion.getId()))
-                    questionAnswers.get(originalQuestion.getId()).addThread(thread);
-                else
-                    questionAnswers.put(originalQuestion.getId(), new QuestionAnswers(originalQuestion, thread));
+                if(questionAnswers.containsKey(origId)) {
+                    questionAnswers.get(origId).addThread(thread);
+
+                    if(questionAnswers.get(origId).getThreads().size() >= 50) {
+                        daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(origId));
+                        questionAnswers.remove(origId); // we need to keep the collection as little as possible
+                    }
+                } else
+                    questionAnswers.put(origId, new QuestionAnswers(originalQuestion, thread, train));
+            }
+
+            // Collect the remaining (if any) objects
+            for(String id: questionAnswers.keySet()) {
+                daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(id));
             }
         } catch (ParserConfigurationException|IOException|SAXException e) {
             e.printStackTrace();
+        } finally {
+            daf.close();
         }
-
-        return new ArrayList<QuestionAnswers>(questionAnswers.values());
     }
 
     private static RelatedQuestion getRelatedQuestionData(Element thread) {

@@ -12,16 +12,27 @@ import java.util.List;
 public class QuestionAnswers {
     private OriginalQuestion question;
     private List<Thread> relatedThreads;
-
-    public QuestionAnswers(OriginalQuestion question, List<Thread> threads) {
-        this.question = question;
-        relatedThreads = threads;
-    }
+    private boolean train;
 
     public QuestionAnswers(OriginalQuestion question, Thread thread) {
+        this(question, thread, true);
+    }
+
+    public QuestionAnswers(OriginalQuestion question, List<Thread> threads) {
+        this(question, threads, true);
+    }
+
+    public QuestionAnswers(OriginalQuestion question, Thread thread, boolean train) {
         this.question = question;
         relatedThreads = new ArrayList<>();
         relatedThreads.add(thread);
+        this.train = train;
+    }
+
+    public QuestionAnswers(OriginalQuestion question, List<Thread> threads, boolean train) {
+        this.question = question;
+        relatedThreads = threads;
+        this.train = train;
     }
 
     public OriginalQuestion getQuestion() {
@@ -95,5 +106,13 @@ public class QuestionAnswers {
 
     public List<Thread> getThreads() {
         return this.relatedThreads;
+    }
+
+    public boolean isTrain() {
+        return train;
+    }
+
+    public void setTrain(boolean train) {
+        this.train = train;
     }
 }
