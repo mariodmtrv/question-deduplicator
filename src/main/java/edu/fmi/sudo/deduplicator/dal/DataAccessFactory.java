@@ -19,11 +19,6 @@ public abstract class DataAccessFactory {
 
     public abstract void prepareDB();
 
-    public void addObject(Collection collection){
-        database.getCollection(collection.getName());
-
-    }
-
     public List<QuestionAnswers> getAllObjects() {
         return null;
     }

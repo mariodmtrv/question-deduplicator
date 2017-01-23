@@ -56,7 +56,9 @@ public class XMLReader {
                     questionAnswers.get(origId).addThread(thread);
 
                     if(questionAnswers.get(origId).getThreads().size() >= 50) {
-                        daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(origId));
+                        if(!daf.exists(Collection.QUESTION_ANSWERS.getName(), "question.id", origId))
+                            daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(origId));
+
                         questionAnswers.remove(origId); // we need to keep the collection as little as possible
                     }
                 } else

@@ -5,6 +5,7 @@ package edu.fmi.sudo.deduplicator.dal;
 
 import com.google.gson.Gson;
 import com.mongodb.*;
+import com.mongodb.client.MongoCursor;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import org.bson.Document;
 
@@ -43,6 +44,19 @@ public class LocalDataAccessFactory extends DataAccessFactory {
         }
 
         database.getCollection(collName).insertMany(documents);
+    }
+
+    /**
+     * Usage for nested object (e.g. get the id field from OriginalQuestion) -> new BaiscObject("question.id", "176235556298")
+     *
+     * @param collName - the name of the collection
+     * @param field - the path to the field that is searched (e.g. "question.subject")
+     * @param value - the value of the field that is searched
+     * @return
+     */
+    public boolean exists(String collName, String field, String value) {
+        MongoCursor cur = database.getCollection(collName).find(new BasicDBObject(field, value)).iterator();
+        return cur.hasNext();
     }
 
     public <T> DBIterator<T> getCursorToCollection(String collName, Class<T> clazz) {

@@ -12,21 +12,26 @@ import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
-        final String devData =
-                args.length > 0?
-                        args[0]:
-                        "M:\\FMI\\SemEval\\DevData\\dev_set.txt"; // for testing
+        if(args.length != 2) {
+            printError("Incorrect number of arguments");
+            return;
+        }
+
+        if(!args[0].equals("train") && !args[0].equals("test")) {
+            printError("Must define if the execution is a train or test one");
+            return;
+        }
 
         // Read properties from deduplicator.properties file located alongside the jar
         readProperties();
 
-        System.out.println("Input file set to: " + devData);
-        XMLReader.readFile(Paths.get(devData).toString(), true);
+        String filename = args[1];
+        System.out.println("INFO: Input file set to: " + filename);
 
-        String pathToSVM = ".\\predictions";
-        Evaluator evaluator = new Evaluator();
-        //data should be the original question-related question pairs, ordered as in the file with the predictions.
-        //evaluator.evaluate(data, pathToSVM, "android");
+        if(args[0].equals("train"))
+            train(Paths.get(filename).toString());
+        else
+            test(Paths.get(filename).toString());
     }
 
     private static void readProperties() {
@@ -41,5 +46,25 @@ public class Main {
             File jarFile = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             Configuration.setBasePath(jarFile.getParentFile().getPath());
         }
+    }
+
+    private static void train(String filename) {
+        XMLReader.readFile(filename, true);
+    }
+
+    private static void test(String filename) {
+        XMLReader.readFile(filename, false);
+
+        String pathToSVM = ".\\predictions";
+        Evaluator evaluator = new Evaluator();
+        //data should be the original question-related question pairs, ordered as in the file with the predictions.
+        //evaluator.evaluate(data, pathToSVM, "android");
+    }
+
+    private static void printError(String message) {
+        System.out.println("ERROR: " + message + "; Usage:");
+        System.out.println();
+        System.out.println("    java -jar deduplicator.jar <train|test> <path_to_data_file>");
+        System.out.println();
     }
 }
