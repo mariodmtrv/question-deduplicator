@@ -4,6 +4,7 @@ import edu.fmi.sudo.deduplicator.entities.OriginalQuestion;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.entities.RelatedQuestion;
 import edu.fmi.sudo.deduplicator.entities.Thread;
+import edu.fmi.sudo.deduplicator.pipeline.TokenizationFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ public class WordMatchesTest {
 
         Thread t1 = new Thread("oq1_r1", rq1, null, null);
         Thread t2 = new Thread("oq1_r2", rq2, null, null);
-       this.qa =  new QuestionAnswers(oq1, Arrays.asList(t1, t2));
+        TokenizationFilter tf = new TokenizationFilter();
+        this.qa = tf.process(new QuestionAnswers(oq1, Arrays.asList(t1, t2)));
     }
 
     @Test

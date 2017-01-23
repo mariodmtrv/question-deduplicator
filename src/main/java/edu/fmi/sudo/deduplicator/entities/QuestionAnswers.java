@@ -45,8 +45,7 @@ public class QuestionAnswers {
 
     public List<RelatedAnswer> getAllRelatedAnswers() {
         List<RelatedAnswer> answers = new ArrayList<>();
-        relatedThreads.stream().forEach(t -> answers.addAll(t.getRelatedAnswers()));
-
+        relatedThreads.stream().filter(t -> t.getRelatedAnswers() != null).forEach(t -> answers.addAll(t.getRelatedAnswers()));
         return answers;
     }
 
@@ -70,8 +69,7 @@ public class QuestionAnswers {
 
     public List<RelatedComment> getAllRelatedComments() {
         List<RelatedComment> relatedComments = new ArrayList<>();
-        relatedThreads.stream().forEach(t -> relatedComments.addAll(t.getRelatedComments()));
-
+        relatedThreads.stream().filter(t -> t.getRelatedComments() != null).forEach(t -> relatedComments.addAll(t.getRelatedComments()));
         return relatedComments;
     }
 

@@ -19,7 +19,7 @@ public class CosSimilarityFeature extends Feature {
     public void process() {
         Map<String, Integer> originalQuestionMap =
                 generateFrequencyMap(this.questionAnswers.getQuestion().getTokens());
-        Stream<Pair> relatedQuestionsSimilarities =
+        List<Pair> relatedQuestionsSimilarities =
                 this.questionAnswers
                         .getThreads().stream()
                         .map(thread -> {
@@ -33,13 +33,13 @@ public class CosSimilarityFeature extends Feature {
                             Double answersSimilarity =
                                     computeCosSimilarity(originalQuestionMap, joinedAnswers);
                             return new Pair(questionSimilarity, answersSimilarity);
-                        });
+                        }).collect(Collectors.toList());
         List<String> normalizedQuestionSimilarities =
-                Feature.normalizeValues(relatedQuestionsSimilarities
+                Feature.normalizeValues(relatedQuestionsSimilarities.stream()
                         .map(pair -> (Double) pair.getKey())
                         .collect(Collectors.toList()));
         List<String> normalizedAnswerSimilarities =
-                Feature.normalizeValues(relatedQuestionsSimilarities
+                Feature.normalizeValues(relatedQuestionsSimilarities.stream()
                         .map(pair -> (Double) pair.getValue())
                         .collect(Collectors.toList()));
         featureValue = IntStream.range(0, normalizedQuestionSimilarities.size())
@@ -81,7 +81,7 @@ public class CosSimilarityFeature extends Feature {
         Map<String, Integer> frequencyMap = new HashMap<>();
         tokens.stream().forEach(token -> {
             Integer count = frequencyMap.get(token);
-            if (count == 0) {
+            if (count == null) {
                 frequencyMap.put(token, 1);
             } else {
                 frequencyMap.put(token, count + 1);

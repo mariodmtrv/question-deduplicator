@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Feature {
+    static final double EPS = 0.0001;
     protected QuestionAnswers questionAnswers;
     protected List<String> featureValue;
 
@@ -52,7 +53,12 @@ public abstract class Feature {
     protected static List<String> normalizeValues(List<Double> values) {
         Double minValue = values.stream().min(Double::compareTo).get();
         Double maxValue = values.stream().max(Double::compareTo).get();
-        List<String> normalizedValues = values.stream().map(value -> (value - minValue) / (maxValue - minValue)).map(Feature::truncateDecimal).collect(Collectors.toList());
+        List<String> normalizedValues = values.stream().map(value -> {
+            if (maxValue - minValue < EPS) {
+                return 1.0;
+            }
+            return (value - minValue) / (maxValue - minValue);
+        }).map(Feature::truncateDecimal).collect(Collectors.toList());
         return normalizedValues;
     }
 
