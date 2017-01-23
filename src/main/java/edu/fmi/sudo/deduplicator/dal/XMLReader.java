@@ -89,7 +89,7 @@ public class XMLReader {
                 Integer.parseInt(relatedQuestion.getAttribute("RELQ_SCORE")),
                 Integer.parseInt(relatedQuestion.getAttribute("RELQ_VIEWCOUNT")),
                 Relevance.valueOf(relatedQuestion.getAttribute("RELQ_RELEVANCE2ORGQ")),
-                Arrays.asList(relatedQuestion.getAttribute("RELQ_TAGS").split(",")),
+                Arrays.asList(relatedQuestion.getAttribute("RELQ_TAGS").split(", ")),
                 Integer.parseInt(relatedQuestion.getAttribute("RELQ_USERID")),
                 relatedQuestion.getAttribute("RELQ_USERNAME"),
                 relatedQuestion.getElementsByTagName("RelQSubject").item(0).getTextContent(),

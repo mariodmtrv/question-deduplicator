@@ -22,9 +22,11 @@ public class WordMatchesTest {
         RelatedQuestion rq1 = new RelatedQuestion();
         rq1.setSubject("Which is the most reliable car in the whole world");
         rq1.setBody("Heard that Aston Martin Vanquish and Porsche Panamera break quickly, but Ferrari Spyder ...");
+        rq1.setTags(Arrays.asList("car", "world", "reliable"));
         RelatedQuestion rq2 = new RelatedQuestion();
         rq2.setSubject("Which is the best value sports car in the whole world");
         rq2.setBody("Heard that Aston Martin Vanquish and Porsche Panamera are overpriced, but Ferrari Spider ...");
+        rq2.setTags(Arrays.asList("overpiced", "sports", "car", "value"));
 
         Thread t1 = new Thread("oq1_r1", rq1, null, null);
         Thread t2 = new Thread("oq1_r2", rq2, null, null);
@@ -56,5 +58,13 @@ public class WordMatchesTest {
         Double size = finder
                 .getIntersectionSize("That is a red car too");
         assert (size - 2.0 < 0.001);
+    }
+
+    @Test
+    public void testCommonTagsFeature() {
+        CommonTagsFeature tagsFeature = new CommonTagsFeature();
+        tagsFeature.setQuestionAnswers(qa);
+        tagsFeature.process();
+        tagsFeature.toVector();
     }
 }

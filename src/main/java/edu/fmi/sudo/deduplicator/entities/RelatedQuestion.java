@@ -127,6 +127,8 @@ public class RelatedQuestion implements Question, Related {
         return tags;
     }
 
+    public void setTags(List<String> tags) { this.tags = tags; }
+
     public Integer getViewCount() {
         return viewCount;
     }
