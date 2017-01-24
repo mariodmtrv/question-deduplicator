@@ -68,9 +68,8 @@ public class MainPipeline {
         QuestionAnswers questionAnswer = null;
         while (dataAccessFactory.hasNextTrain()) {
             questionAnswer = dataAccessFactory.getNextTrainEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswer);
+            FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             List<Feature> trainingFeatures = features;
-            trainingFeatures.add(new TrainDataLabel());
             featureVector.setFeatures(trainingFeatures);
             featureVector.process();
             trainSetGenerator.writeEntry(featureVector.getValues());
@@ -84,7 +83,7 @@ public class MainPipeline {
         QuestionAnswers questionAnswers = null;
         while (daf.hasNextTest()) {
             questionAnswers = daf.getNextTestEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswers);
+            FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
             featureVector.process();
             testSetGenerator.writeEntry(featureVector.getValues());
