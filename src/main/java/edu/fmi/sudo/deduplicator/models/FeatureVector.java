@@ -15,11 +15,14 @@ public class FeatureVector {
     TrainDataLabel labelFeature;
     boolean isTrain;
     private QuestionAnswers qa;
-    public FeatureVector(QuestionAnswers qa, boolean isTrain) {
+    private Integer queryId;
+
+    public FeatureVector(QuestionAnswers qa, boolean isTrain, Integer queryId) {
         this.isTrain = isTrain;
         this.qa = qa;
+        this.queryId = queryId;
         this.vectorMetadata = new VectorMetadataFeature();
-        if(isTrain){
+        if (isTrain) {
             this.labelFeature = new TrainDataLabel();
         }
     }
@@ -32,12 +35,12 @@ public class FeatureVector {
             final int id = index;
             features.stream().forEach(feature -> entryResult.append(feature.getEntryValue(id) + ", "));
             String completeVector = entryResult.toString();
-            completeVector = completeVector.substring(0,completeVector.length()-1);
+            completeVector = completeVector.substring(0, completeVector.length() - 1);
             List<String> featureValues = Arrays.asList(completeVector.split(","));
             String mappedEntry = IntStream.range(1, featureValues.size()).mapToObj(entryId -> entryId + ":" + featureValues.get(entryId)).reduce((a, b) -> a + " " + b).get();
 
             if (isTrain) {
-                mappedEntry = labelFeature.getEntryValue(index) + " " + mappedEntry;
+                mappedEntry = String.format("%s qid:%d %s", labelFeature.getEntryValue(index), queryId, mappedEntry);
             }
             mappedEntry = mappedEntry + " " + vectorMetadata.getEntryValue(index);
             matrix.add(mappedEntry);
@@ -56,13 +59,14 @@ public class FeatureVector {
     public List<String> getValues() {
         return toMatrix();
     }
-    public void setFeatures( List<Feature> features){
+
+    public void setFeatures(List<Feature> features) {
         this.features = features;
         this.features.forEach(f -> {
             f.setQuestionAnswers(qa);
         });
         vectorMetadata.setQuestionAnswers(qa);
-        if(isTrain){
+        if (isTrain) {
             labelFeature.setQuestionAnswers(qa);
         }
     }
