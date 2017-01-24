@@ -6,8 +6,7 @@ import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
 import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.BiGramsFeature;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
+import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
 import edu.fmi.sudo.deduplicator.training.SvmClassifierAdapter;
@@ -28,7 +27,13 @@ public class MainPipeline {
     // use pipeline features?
     private List<Feature> features =
             Collections.unmodifiableList(
-                    Arrays.asList(new BiGramsFeature(), new MatchingWordsFeature()));
+                    Arrays.asList(  new BiGramsFeature()
+                            , new CommonTagsFeature()
+                            , new CosSimilarityFeature()
+                            , new MatchingWordsFeature()
+                            , new PosTaggingNounOverlapFeature()
+                            , new PosTaggingProportionsFeature()
+                            , new UserVotesFeature()));
 
     MainPipeline() {
         enabledFeatures = new ArrayList<>();
@@ -68,9 +73,8 @@ public class MainPipeline {
         QuestionAnswers questionAnswer = null;
         while (dataAccessFactory.hasNextTrain()) {
             questionAnswer = dataAccessFactory.getNextTrainEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswer);
+            FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             List<Feature> trainingFeatures = features;
-            trainingFeatures.add(new TrainDataLabel());
             featureVector.setFeatures(trainingFeatures);
             featureVector.process();
             trainSetGenerator.writeEntry(featureVector.getValues());
@@ -84,7 +88,7 @@ public class MainPipeline {
         QuestionAnswers questionAnswers = null;
         while (daf.hasNextTest()) {
             questionAnswers = daf.getNextTestEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswers);
+            FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
             featureVector.process();
             testSetGenerator.writeEntry(featureVector.getValues());

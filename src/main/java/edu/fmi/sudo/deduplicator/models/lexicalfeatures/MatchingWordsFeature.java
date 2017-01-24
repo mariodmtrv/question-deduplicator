@@ -42,7 +42,7 @@ public class MatchingWordsFeature extends Feature {
             featureValue.add(questionValue.toString());
             if (answers != null) {
                 for (RelatedAnswer answer : answers) {
-                    Double answerIntersection = intersectionFinder.getIntersectionSize(answer.getText());
+                    Double answerIntersection = intersectionFinder.getIntersectionSize(answer.getTextTokens());
                     Double answerCommentsIntersection = getCommentsIntersectionSize(answer.getRelatedComments());
                     answerValue += (answerIntersection + answerCommentsIntersection);
                 }
@@ -56,7 +56,7 @@ public class MatchingWordsFeature extends Feature {
             return 0.0;
         }
         return comments.stream()
-                .map(comment -> intersectionFinder.getIntersectionSize(comment.getText()))
+                .map(comment -> intersectionFinder.getIntersectionSize(comment.getTextTokens()))
                 .reduce((a, b) -> a + b).get();
     }
 }
