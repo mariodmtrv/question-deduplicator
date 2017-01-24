@@ -1,20 +1,13 @@
-package edu.fmi.sudo.deduplicator;
+package edu.fmi.sudo.deduplicator.evaluation;
 
-import edu.fmi.sudo.deduplicator.entities.OriginalQuestion;
-import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
-import edu.fmi.sudo.deduplicator.evaluation.Evaluator;
-import edu.fmi.sudo.deduplicator.entities.Thread;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +56,8 @@ public class EvaluatorTest {
 
             assert ("1\t1_R1\t0\t0.1\ttrue".equals(lines.get(0)));
             assert ("1\t1_R2\t0\t0.2\tfalse".equals(lines.get(1)));
-            assert ("2\t2_R1\t0\t0.3\tfalse".equals(lines.get(2)));
+            assert ("1\tNIL".equals(lines.get(2)));
+            assert ("2\t2_R1\t0\t0.3\tfalse".equals(lines.get(3)));
 
         } catch (IOException e) {
             e.printStackTrace();

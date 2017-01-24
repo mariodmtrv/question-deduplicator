@@ -5,9 +5,6 @@
  */
 package edu.fmi.sudo.deduplicator.evaluation;
 
-import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
-import edu.fmi.sudo.deduplicator.entities.Thread;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -56,11 +53,20 @@ public class Evaluator {
 
             PrintWriter pw = new PrintWriter(new FileWriter("." + File.separator + category + "_results.pred"));
 
+            String previousOrigQId = "";
+
             for (int i = 0; i < testLines.size(); i++) {
                 String testLine = testLines.get(i);
                 String prediction = lines.get(i);
 
                 String[] info = testLine.split("#")[1].split(" ");
+
+                if (!previousOrigQId.equals("") && !previousOrigQId.equals(info[0])) {
+                    String nilLine = String.format("%s\tNIL",
+                            previousOrigQId);
+
+                    pw.println(nilLine);
+                }
 
                 boolean perfectMatch = "PerfectMatch".equals(info[2]);
 
@@ -71,6 +77,8 @@ public class Evaluator {
                         perfectMatch);
 
                 pw.println(evalLine);
+
+                previousOrigQId = info[0];
             }
 
             pw.close();
