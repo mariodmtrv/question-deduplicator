@@ -63,6 +63,11 @@ public class RelatedQuestion implements Question, Related {
 
     }
 
+    public RelatedQuestion(String id, Relevance relevance) {
+        this.id = id;
+        this.relevanceToOriginalQuestion = relevance;
+    }
+
     @Override
     public String getId() {
         return id.split("_")[1].substring(1);

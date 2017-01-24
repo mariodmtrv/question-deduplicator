@@ -100,7 +100,7 @@ public abstract  class PosTaggingFeature extends Feature {
         double diff = values.stream().max(Double::compareTo).get()
                 - values.stream().min(Double::compareTo).get();
 
-        DecimalFormat df = new DecimalFormat("#.####");
+        DecimalFormat df = new DecimalFormat("#.###");
         df.setRoundingMode(RoundingMode.CEILING);
 
         return values.stream()
