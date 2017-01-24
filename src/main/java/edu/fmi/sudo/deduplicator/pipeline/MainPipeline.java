@@ -76,7 +76,6 @@ public class MainPipeline {
             FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             List<Feature> trainingFeatures = features;
             featureVector.setFeatures(trainingFeatures);
-            featureVector.process();
             trainSetGenerator.writeEntry(featureVector.getValues());
         }
         SvmLearnerAdapter learner = new SvmLearnerAdapter(executionIdentifier);
@@ -90,7 +89,6 @@ public class MainPipeline {
             questionAnswers = daf.getNextTestEntry();
             FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
-            featureVector.process();
             testSetGenerator.writeEntry(featureVector.getValues());
         }
         SvmClassifierAdapter classifier = new SvmClassifierAdapter(executionIdentifier);

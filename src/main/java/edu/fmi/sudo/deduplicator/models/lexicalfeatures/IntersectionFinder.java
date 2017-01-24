@@ -49,6 +49,9 @@ public class IntersectionFinder {
     }
 
     public Double getIntersectionSize(List<String> targetWords) {
+        if(targetWords.size() < nGramLength){
+            return 0.0;
+        }
         if (sourceEntityWordsSet == null) {
             sourceEntityWordsSet = createSet();
         }

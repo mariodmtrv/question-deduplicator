@@ -106,6 +106,6 @@ public abstract  class PosTaggingFeature extends Feature {
         return values.stream()
                 .map(v -> diff == 0 ? 0 : (v - mean) / diff)
                 .map(v -> df.format(v))
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.joining(","));
     }
 }

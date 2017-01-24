@@ -23,17 +23,17 @@ public class TrainDataLabel extends Feature {
                         .collect(Collectors.toList());
     }
 
-    private Integer getLabel(RelatedQuestion entry) {
+    private String getLabel(RelatedQuestion entry) {
         Relevance relevance = entry.getRelevanceToOriginalQuestion();
         switch (relevance) {
             case PerfectMatch: {
-                return 1;
+                return "+1";
             }
             case Related: {
-                return 1;
+                return "+1";
             }
             case Irrelevant: {
-                return 0;
+                return "-1";
             }
             default: {
                 throw new IllegalStateException("Entry not labeled");

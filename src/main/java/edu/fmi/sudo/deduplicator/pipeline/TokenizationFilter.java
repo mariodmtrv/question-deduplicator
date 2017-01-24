@@ -24,6 +24,11 @@ public class TokenizationFilter {
             result.getAllRelatedComments().forEach(relatedComment -> {
                 relatedComment.setTextTokens(tokenizeEntity(relatedComment.getText()));
             });
+            result.getAllRelatedAnswers().forEach(relatedAnswer -> {
+                relatedAnswer.getRelatedComments().forEach(relatedComment -> {
+                    relatedComment.setTextTokens(tokenizeEntity(relatedComment.getText()));
+                });
+            });
         return result;
     }
 

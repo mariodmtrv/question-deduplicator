@@ -1,20 +1,19 @@
 package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
-import edu.fmi.sudo.deduplicator.entities.OriginalQuestion;
-import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
-import edu.fmi.sudo.deduplicator.entities.RelatedQuestion;
+import edu.fmi.sudo.deduplicator.entities.*;
 import edu.fmi.sudo.deduplicator.entities.Thread;
 import edu.fmi.sudo.deduplicator.pipeline.TokenizationFilter;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WordMatchesTest {
     private QuestionAnswers qa;
     @Before
     public void setUp(){
-
         OriginalQuestion oq1 = new OriginalQuestion("oq1",
                 "Which is the best car in the whole world",
                 "Thinking of Aston Martin Vanquish, Porsche Panamera, Ferrari Spyder ...");
@@ -28,10 +27,12 @@ public class WordMatchesTest {
         rq2.setBody("Heard that Aston Martin Vanquish and Porsche Panamera are overpriced, but Ferrari Spider ...");
         rq2.setTags(Arrays.asList("overpiced", "sports", "car", "value"));
 
-        Thread t1 = new Thread("oq1_r1", rq1, null, null);
-        Thread t2 = new Thread("oq1_r2", rq2, null, null);
+        List<RelatedAnswer> answers = new ArrayList<RelatedAnswer>(Arrays.asList(new RelatedAnswer(null,null,null,null,1,true,"Aston is awesome",new ArrayList<RelatedComment>(Arrays.asList(new RelatedComment(null,null,null,null,1,"Aston")))))) ;
+        Thread t1 = new Thread("oq1_r1", rq1, answers, null);
+        Thread t2 = new Thread("oq1_r2", rq2, answers, null);
+        this.qa =  new QuestionAnswers(oq1, Arrays.asList(t1, t2));
         TokenizationFilter tf = new TokenizationFilter();
-        this.qa = tf.process(new QuestionAnswers(oq1, Arrays.asList(t1, t2)));
+        this.qa = tf.process(qa);
     }
 
     @Test

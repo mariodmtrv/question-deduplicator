@@ -8,13 +8,15 @@ package edu.fmi.sudo.deduplicator.models;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Feature {
-    static final double EPS = 0.0001;
+    static final double EPS = 0.00001;
     protected QuestionAnswers questionAnswers;
     protected List<String> featureValue;
 
@@ -51,18 +53,20 @@ public abstract class Feature {
     }
 
     protected static List<String> normalizeValues(List<Double> values) {
-        Double minValue = values.stream().min(Double::compareTo).get();
-        Double maxValue = values.stream().max(Double::compareTo).get();
-        List<String> normalizedValues = values.stream().map(value -> {
-            if (maxValue - minValue < EPS) {
-                return 1.0;
-            }
-            return (value - minValue) / (maxValue - minValue);
-        }).map(Feature::truncateDecimal).collect(Collectors.toList());
-        return normalizedValues;
+        Double mean = values.stream().mapToDouble(x -> x).average().getAsDouble();
+        Double diff = values.stream().max(Double::compareTo).get()
+                - values.stream().min(Double::compareTo).get();
+
+        DecimalFormat df = new DecimalFormat("#.###");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        return values.stream()
+                .map(v -> diff == 0 ? 0 : ((v - mean) / diff + 0.5))
+                .map(v -> df.format(v))
+                .collect(Collectors.toList());
     }
 
-    private static String truncateDecimal(double x)
+    protected static String truncateDecimal(double x)
     {
         int numberOfDecimals = 3;
         if ( x > 0) {

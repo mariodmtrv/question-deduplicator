@@ -38,7 +38,6 @@ public class PosTaggingFeatureTest {
 
         PosTaggingNounOverlapFeature feature = new PosTaggingNounOverlapFeature();
         feature.setQuestionAnswers(qa);
-
         feature.toVector();
     }
 
@@ -64,7 +63,6 @@ public class PosTaggingFeatureTest {
 
         PosTaggingProportionsFeature feature = new PosTaggingProportionsFeature();
         feature.setQuestionAnswers(qa);
-
         feature.toVector();
     }
 }
