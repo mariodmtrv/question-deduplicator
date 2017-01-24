@@ -6,8 +6,7 @@ import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
 import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.BiGramsFeature;
-import edu.fmi.sudo.deduplicator.models.lexicalfeatures.MatchingWordsFeature;
+import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
 import edu.fmi.sudo.deduplicator.training.SvmClassifierAdapter;
@@ -28,7 +27,13 @@ public class MainPipeline {
     // use pipeline features?
     private List<Feature> features =
             Collections.unmodifiableList(
-                    Arrays.asList(new BiGramsFeature(), new MatchingWordsFeature()));
+                    Arrays.asList(  new BiGramsFeature()
+                            , new CommonTagsFeature()
+                            , new CosSimilarityFeature()
+                            , new MatchingWordsFeature()
+                            , new PosTaggingNounOverlapFeature()
+                            , new PosTaggingProportionsFeature()
+                            , new UserVotesFeature()));
 
     MainPipeline() {
         enabledFeatures = new ArrayList<>();

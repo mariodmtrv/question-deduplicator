@@ -20,12 +20,12 @@ public class FeatureVectorTest {
             Collections.unmodifiableList(
                     Arrays.asList(
                             new BiGramsFeature()
-//                            , new CommonTagsFeature()
-//                            , new CosSimilarityFeature()
-//                            , new MatchingWordsFeature()
-//                            , new PosTaggingNounOverlapFeature()
-//                            , new PosTaggingProportionsFeature()
-//                            , new UserVotesFeature()
+                            , new CommonTagsFeature()
+                            , new CosSimilarityFeature()
+                            , new MatchingWordsFeature()
+                            , new PosTaggingNounOverlapFeature()
+                            , new PosTaggingProportionsFeature()
+                            , new UserVotesFeature()
                     ));
 
     @Before
