@@ -12,19 +12,23 @@ import java.util.stream.IntStream;
 public class FeatureVector {
     List<Feature> features;
     VectorMetadataFeature vectorMetadata;
-    TrainDataLabel label;
+    TrainDataLabel labelFeature;
     boolean isTrain;
     private QuestionAnswers qa;
     public FeatureVector(QuestionAnswers qa, boolean isTrain) {
         this.isTrain = isTrain;
         this.qa = qa;
+        this.vectorMetadata = new VectorMetadataFeature();
+        if(isTrain){
+            this.labelFeature = new TrainDataLabel();
+        }
     }
 
     public void process() {
         features.forEach(f -> f.process());
         vectorMetadata.process();
         if(isTrain){
-            label.process();
+            labelFeature.process();
         }
     }
 
@@ -41,7 +45,7 @@ public class FeatureVector {
             //add features with no label
             mappedEntry = vectorMetadata.getEntryValue(index) + mappedEntry;
             if (isTrain) {
-                mappedEntry = mappedEntry + label.getEntryValue(index);
+                mappedEntry = mappedEntry + labelFeature.getEntryValue(index);
             }
             matrix.add(mappedEntry);
         }
@@ -61,12 +65,12 @@ public class FeatureVector {
     }
     public void setFeatures( List<Feature> features){
         this.features = features;
-        features.forEach(f -> {
+        this.features.forEach(f -> {
             f.setQuestionAnswers(qa);
         });
         vectorMetadata.setQuestionAnswers(qa);
         if(isTrain){
-            label.setQuestionAnswers(qa);
+            labelFeature.setQuestionAnswers(qa);
         }
     }
 }

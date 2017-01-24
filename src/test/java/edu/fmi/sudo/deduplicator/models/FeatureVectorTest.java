@@ -18,7 +18,15 @@ public class FeatureVectorTest {
     private QuestionAnswers qa;
     private List<Feature> features =
             Collections.unmodifiableList(
-                    Arrays.asList(new BiGramsFeature(), new CommonTagsFeature(), new CosSimilarityFeature(), new MatchingWordsFeature(), new PosTaggingNounOverlapFeature(), new PosTaggingProportionsFeature(), new UserVotesFeature()));
+                    Arrays.asList(
+                            new BiGramsFeature()
+//                            , new CommonTagsFeature()
+//                            , new CosSimilarityFeature()
+//                            , new MatchingWordsFeature()
+//                            , new PosTaggingNounOverlapFeature()
+//                            , new PosTaggingProportionsFeature()
+//                            , new UserVotesFeature()
+                    ));
 
     @Before
     public void setUp() {
