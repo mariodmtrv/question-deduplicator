@@ -35,14 +35,9 @@ public class Evaluator {
         this.categoriesMap.put("wordpress", "stackexchange_wordpress_devel.xml.subtaskE.relevancy.bm25");
     }
 
-    public void evaluate(List<QuestionAnswers> data, String pathToClassifiedData, String category) {
-        prepareClassifierOutput(data, pathToClassifiedData, category);
+    public void evaluate(String pathToTestData, String pathToClassifiedData, String category) {
+        prepareClassifierOutput(pathToTestData, pathToClassifiedData, category);
 
-//        ClassLoader classLoader = this.getClass().getClassLoader();
-//         Getting resource(File) from class loader
-//        File configFile=new File(classLoader.getResource(fileName).getFile());
-//
-//        Read more at http://www.java2blog.com/2016/02/read-file-from-resources-folder-in-java.html#D4WuwSZ5CXBC5Jcp.99
         String command = String.format("python %1$sev.py %1$s%2$s .\\%3$s_results.pred",
                 this.evaluatorPath,
                 this.categoriesMap.get(category),
@@ -54,27 +49,28 @@ public class Evaluator {
         }
     }
 
-    public void prepareClassifierOutput(List<QuestionAnswers> data, String pathToClassifiedData, String category) {
+    public void prepareClassifierOutput(String pathToTestData, String pathToClassifiedData, String category) {
         try {
+            List<String> testLines = Files.lines(Paths.get(pathToTestData)).collect(Collectors.toList());
             List<String> lines = Files.lines(Paths.get(pathToClassifiedData)).collect(Collectors.toList());
 
-            //PrintWriter pw = new PrintWriter(new FileWriter(this.evaluatorPath + category + "_results.pred", true));
             PrintWriter pw = new PrintWriter(new FileWriter("." + File.separator + category + "_results.pred"));
 
-            int counter = 0;
-            for (QuestionAnswers qa: data) {
-                for (Thread t: qa.getThreads()) {
-                    String p;
-                    if(counter >= lines.size()) {
-                        p = "0";
-                    } else {
-                        p = lines.get(counter);
-                    }
-                    String line = String.format("%s\t%s\t0\t%s\t%s", qa.getQuestion().getId(), t.getId(), p, true);
-                    pw.println(line);
+            for (int i = 0; i < testLines.size(); i++) {
+                String testLine = testLines.get(i);
+                String prediction = lines.get(i);
 
-                    counter++;
-                }
+                String[] info = testLine.split("#")[1].split(" ");
+
+                boolean perfectMatch = "PerfectMatch".equals(info[2]);
+
+                String evalLine = String.format("%1$s\t%1$s_R%2$s\t0\t%3$s\t%4$s",
+                        info[0],
+                        info[1],
+                        prediction,
+                        perfectMatch);
+
+                pw.println(evalLine);
             }
 
             pw.close();

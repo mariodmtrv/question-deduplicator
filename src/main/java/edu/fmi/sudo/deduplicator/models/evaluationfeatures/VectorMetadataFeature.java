@@ -11,7 +11,7 @@ public class VectorMetadataFeature extends Feature {
     public void process() {
         for (RelatedQuestion rq : this.questionAnswers.getAllRelatedQuestions()) {
             String value = String.format(
-                    "# %s %s %s",
+                    "#%s %s %s",
                     this.questionAnswers.getQuestion().getId(),
                     rq.getId(),
                     rq.getRelevanceToOriginalQuestion().toString());

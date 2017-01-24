@@ -39,28 +39,31 @@ public class EvaluatorTest {
             }
         }
 
-        Thread t1 = new Thread("oq1_r1", null, null, null);
-        Thread t2 = new Thread("oq2_r1", null, null, null);
-        Thread t3 = new Thread("oq2_r2", null, null, null);
-
-        OriginalQuestion oq1 = new OriginalQuestion("oq1", "", "");
-        OriginalQuestion oq2 = new OriginalQuestion("oq2", "", "");
-
-        QuestionAnswers qa = new QuestionAnswers(oq1, t1);
-        QuestionAnswers qa2 = new QuestionAnswers(oq2, new ArrayList<>(Arrays.asList(t2, t3)));
-
-        List<QuestionAnswers> data = new ArrayList<>(Arrays.asList(qa, qa2));
+        String pathToTest = "." + File.separator + "tests";
+        PrintWriter pwTest = null;
+        try {
+            pwTest = new PrintWriter(new FileWriter(pathToTest));
+            pwTest.println("3 qid:1 1:1 2:1 3:0 4:0.2 5:0 #1 1 PerfectMatch");
+            pwTest.println("3 qid:1 1:1 2:1 3:0 4:0.2 5:0 #1 2 Related");
+            pwTest.println("3 qid:1 1:1 2:1 3:0 4:0.2 5:0 #2 1 Irrelevant");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (pwTest != null) {
+                pwTest.close();
+            }
+        }
 
         Evaluator evaluator = new Evaluator();
-        evaluator.evaluate(data, pathToPrediction, "android");
+        evaluator.prepareClassifierOutput(pathToTest, pathToPrediction, "android");
 
         try {
             //List<String> lines = Files.lines(Paths.get(Evaluator.getEvaluationPath() + "android_results.pred")).collect(Collectors.toList());
             List<String> lines = Files.lines(Paths.get("." + File.separator + "android_results.pred")).collect(Collectors.toList());
 
-            assert ("oq1\toq1_r1\t0\t0.1\ttrue".equals(lines.get(0)));
-            assert ("oq2\toq2_r1\t0\t0.2\ttrue".equals(lines.get(1)));
-            assert ("oq2\toq2_r2\t0\t0.3\ttrue".equals(lines.get(2)));
+            assert ("1\t1_R1\t0\t0.1\ttrue".equals(lines.get(0)));
+            assert ("1\t1_R2\t0\t0.2\tfalse".equals(lines.get(1)));
+            assert ("2\t2_R1\t0\t0.3\tfalse".equals(lines.get(2)));
 
         } catch (IOException e) {
             e.printStackTrace();
