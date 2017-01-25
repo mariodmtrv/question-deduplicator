@@ -74,8 +74,7 @@ public class MainPipeline {
         while (dataAccessFactory.hasNextTrain()) {
             questionAnswer = dataAccessFactory.getNextTrainEntry();
             FeatureVector featureVector = new FeatureVector(questionAnswer, true);
-            List<Feature> trainingFeatures = features;
-            featureVector.setFeatures(trainingFeatures);
+            featureVector.setFeatures(features);
             trainSetGenerator.writeEntry(featureVector.getValues());
         }
         SvmLearnerAdapter learner = new SvmLearnerAdapter(executionIdentifier);
@@ -85,7 +84,6 @@ public class MainPipeline {
     public void testGeneratedModel(LocalDataAccessFactory daf) {
         DataSetGenerator testSetGenerator = new DataSetGenerator(DataSetType.TEST, executionIdentifier);
         QuestionAnswers questionAnswers = null;
-        Integer queryid = 0;
         while (daf.hasNextTest()) {
             questionAnswers = daf.getNextTestEntry();
             FeatureVector featureVector = new FeatureVector(questionAnswers, false);
