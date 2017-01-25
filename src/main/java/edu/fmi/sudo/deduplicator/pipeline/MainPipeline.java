@@ -5,6 +5,7 @@ import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
+import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
@@ -86,12 +87,11 @@ public class MainPipeline {
     public void trainModel() {
         DataSetGenerator trainSetGenerator = new DataSetGenerator(DataSetType.TRAIN, executionIdentifier);
         QuestionAnswers questionAnswer = null;
-        Integer queryid = 0;
 
         daf.initializeTrainCursor();
         while (daf.hasNextTrain()) {
             questionAnswer = preProcess(daf.getNextTrainEntry());
-            FeatureVector featureVector = new FeatureVector(questionAnswer, true, ++queryid);
+            FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             List<Feature> trainingFeatures = features;
             featureVector.setFeatures(trainingFeatures);
             trainSetGenerator.writeEntry(featureVector.getValues());
@@ -110,7 +110,7 @@ public class MainPipeline {
         daf.initializeTestCursor();
         while (daf.hasNextTest()) {
             questionAnswers = preProcess(daf.getNextTestEntry());
-            FeatureVector featureVector = new FeatureVector(questionAnswers, false, ++queryid);
+            FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
             testSetGenerator.writeEntry(featureVector.getValues());
         }
