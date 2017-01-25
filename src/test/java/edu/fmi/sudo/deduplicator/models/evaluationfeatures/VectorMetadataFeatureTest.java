@@ -32,7 +32,7 @@ public class VectorMetadataFeatureTest {
         f.setQuestionAnswers(qa);
         List<String> vector = f.toVector();
 
-        assert (vector.get(0).equals("# oq1 1 PerfectMatch"));
-        assert (vector.get(1).equals("# oq1 2 Related"));
+        assert (vector.get(0).equals("#oq1 1 PerfectMatch"));
+        assert (vector.get(1).equals("#oq1 2 Related"));
     }
 }
