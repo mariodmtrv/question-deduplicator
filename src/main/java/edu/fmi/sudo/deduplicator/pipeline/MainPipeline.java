@@ -71,10 +71,9 @@ public class MainPipeline {
     public void trainModel(LocalDataAccessFactory dataAccessFactory) {
         DataSetGenerator trainSetGenerator = new DataSetGenerator(DataSetType.TRAIN, executionIdentifier);
         QuestionAnswers questionAnswer = null;
-        Integer queryid = 0;
         while (dataAccessFactory.hasNextTrain()) {
             questionAnswer = dataAccessFactory.getNextTrainEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswer, true, ++queryid);
+            FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             List<Feature> trainingFeatures = features;
             featureVector.setFeatures(trainingFeatures);
             trainSetGenerator.writeEntry(featureVector.getValues());
@@ -89,7 +88,7 @@ public class MainPipeline {
         Integer queryid = 0;
         while (daf.hasNextTest()) {
             questionAnswers = daf.getNextTestEntry();
-            FeatureVector featureVector = new FeatureVector(questionAnswers, false, ++queryid);
+            FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
             testSetGenerator.writeEntry(featureVector.getValues());
         }
