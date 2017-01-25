@@ -27,13 +27,13 @@ public class TrainDataLabel extends Feature {
         Relevance relevance = entry.getRelevanceToOriginalQuestion();
         switch (relevance) {
             case PerfectMatch: {
-                return "+1";
+                return "3";
             }
             case Related: {
-                return "+1";
+                return "2";
             }
             case Irrelevant: {
-                return "-1";
+                return "1";
             }
             default: {
                 throw new IllegalStateException("Entry not labeled");
