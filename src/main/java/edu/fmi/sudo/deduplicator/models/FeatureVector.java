@@ -37,11 +37,13 @@ public class FeatureVector {
             String completeVector = entryResult.toString();
             completeVector = completeVector.substring(0, completeVector.length() - 1);
             List<String> featureValues = Arrays.asList(completeVector.split(","));
-            String mappedEntry = IntStream.range(1, featureValues.size()).mapToObj(entryId -> entryId + ":" + featureValues.get(entryId)).reduce((a, b) -> a + " " + b).get();
+            Optional<String> reducedEntry = IntStream.range(1, featureValues.size()).mapToObj(entryId -> entryId + ":" + featureValues.get(entryId)).reduce((a, b) -> a + " " + b);
+            String mappedEntry = reducedEntry.isPresent()? reducedEntry.get(): "";
 
             if (isTrain) {
                 mappedEntry = String.format("%s qid:%d %s", labelFeature.getEntryValue(index), queryId, mappedEntry);
             }
+
             mappedEntry = mappedEntry + " " + vectorMetadata.getEntryValue(index);
             matrix.add(mappedEntry);
         }

@@ -10,6 +10,7 @@ import javafx.util.Pair;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -58,22 +59,29 @@ public class CosSimilarityFeature extends Feature {
     }
 
     private Double computeCosSimilarity(Map<String, Integer> orig, Map<String, Integer> other) {
-        Double result = Double.valueOf(
+        Optional<Integer> reduced =
                 orig.entrySet().stream()
                         .map(entry -> {
                             if (other.containsKey(entry.getKey())) {
                                 return entry.getValue() * other.get(entry.getKey());
                             }
                             return 0;
-                        }).reduce(Integer::sum).get());
+                        }).reduce(Integer::sum);
+
+        Double result = reduced.isPresent()? Double.valueOf(reduced.get()): 0.0;
         result /= (getNorm(orig) * getNorm(other));
         return result;
     }
 
     private Double getNorm(Map<String, Integer> vector) {
-        Integer squaredSum = vector.entrySet().stream()
+        if(vector == null || vector.isEmpty())
+            return 0.0;
+
+        Optional<Integer> reduced = vector.entrySet().stream()
                 .map(entry -> entry.getValue() * entry.getValue())
-                .reduce(Integer::sum).get();
+                .reduce(Integer::sum);
+
+        Integer squaredSum = reduced.isPresent()? reduced.get(): 0;
         return Math.sqrt(squaredSum);
     }
 

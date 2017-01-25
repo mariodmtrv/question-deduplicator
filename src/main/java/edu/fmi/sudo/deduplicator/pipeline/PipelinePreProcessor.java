@@ -2,9 +2,9 @@ package edu.fmi.sudo.deduplicator.pipeline;
 
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 
-public class PipelineFilter {
-    public static QuestionAnswers process(PipelineFeature feature, QuestionAnswers qa) {
-        switch(feature) {
+public class PipelinePreProcessor {
+    public static QuestionAnswers process(PipelinePreProcessTask filter, QuestionAnswers qa) {
+        switch(filter) {
             case GENERAL_STOPWORDS_REMOVAL:
                 return GeneralStopwordsRemovalFilter.process(qa);
             case SPECIALIZED_STOPWORDS_REMOVAL:

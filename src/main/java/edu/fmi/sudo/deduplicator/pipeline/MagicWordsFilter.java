@@ -11,6 +11,6 @@ public class MagicWordsFilter {
 
     public static QuestionAnswers process(QuestionAnswers qa) {
         // TODO
-        return null;
+        return qa;
     }
 }

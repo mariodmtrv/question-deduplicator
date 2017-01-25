@@ -8,6 +8,6 @@ import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 public class WSDFilter {
     public static QuestionAnswers process(QuestionAnswers qa) {
         // TODO
-        return null;
+        return qa;
     }
 }

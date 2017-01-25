@@ -1,13 +1,18 @@
 package edu.fmi.sudo.deduplicator;
 
 import edu.fmi.sudo.deduplicator.config.Configuration;
+import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.dal.XMLReader;
-import edu.fmi.sudo.deduplicator.evaluation.Evaluator;
+import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
+import edu.fmi.sudo.deduplicator.pipeline.MainPipeline;
+import edu.fmi.sudo.deduplicator.pipeline.PipelinePreProcessTask;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
 public class Main {
@@ -53,16 +58,76 @@ public class Main {
     }
 
     private static void train(String filename) {
+        LocalDataAccessFactory daf = new LocalDataAccessFactory();
+        daf.prepareDB();
+
         XMLReader.readFile(filename, true);
+        MainPipeline pipeline = new MainPipeline(
+                Collections.unmodifiableList(
+                        Arrays.asList(
+                                PipelinePreProcessTask.GENERAL_STOPWORDS_REMOVAL,
+                                PipelinePreProcessTask.SPECIALIZED_STOPWORDS_REMOVAL,
+                                PipelinePreProcessTask.MAGIC_WORDS,
+                                PipelinePreProcessTask.WSD,
+                                PipelinePreProcessTask.POS_TAGGING,
+                                PipelinePreProcessTask.TOKENIZATION
+                        )
+                ),
+                Collections.unmodifiableList(
+                        Arrays.asList(  new BiGramsFeature()
+                                , new CommonTagsFeature()
+                                , new CosSimilarityFeature()
+                                , new MatchingWordsFeature()
+                                , new PosTaggingNounOverlapFeature()
+                                , new PosTaggingProportionsFeature()
+                                , new UserVotesFeature()
+                        )
+                ),
+                daf
+        );
+
+        pipeline.run(true);
+
+        daf.close();
     }
 
     private static void test(String filename) {
-        XMLReader.readFile(filename, false);
+        LocalDataAccessFactory daf = new LocalDataAccessFactory();
+        daf.prepareDB();
 
-        String pathToSVM = ".\\predictions";
-        Evaluator evaluator = new Evaluator();
+        XMLReader.readFile(filename, false);
+        MainPipeline pipeline = new MainPipeline(
+                Collections.unmodifiableList(
+                        Arrays.asList(
+                                PipelinePreProcessTask.GENERAL_STOPWORDS_REMOVAL,
+                                PipelinePreProcessTask.SPECIALIZED_STOPWORDS_REMOVAL,
+                                PipelinePreProcessTask.MAGIC_WORDS,
+                                PipelinePreProcessTask.WSD,
+                                PipelinePreProcessTask.POS_TAGGING,
+                                PipelinePreProcessTask.TOKENIZATION
+                        )
+                ),
+                Collections.unmodifiableList(
+                        Arrays.asList(  new BiGramsFeature()
+                                , new CommonTagsFeature()
+                                , new CosSimilarityFeature()
+                                , new MatchingWordsFeature()
+                                , new PosTaggingNounOverlapFeature()
+                                , new PosTaggingProportionsFeature()
+                                , new UserVotesFeature()
+                        )
+                ),
+                daf
+        );
+
+        pipeline.run(false);
+
+//        String pathToSVM = ".\\predictions";
+//        Evaluator evaluator = new Evaluator();
         //data should be the original question-related question pairs, ordered as in the file with the predictions.
         //evaluator.evaluate(data, pathToSVM, "android");
+
+        daf.close();
     }
 
     private static void printError(String message) {

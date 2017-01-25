@@ -2,10 +2,7 @@ package edu.fmi.sudo.deduplicator.models.lexicalfeatures;
 
 import edu.fmi.sudo.deduplicator.pipeline.TokenizationFilter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class IntersectionFinder {
     Set<String> sourceEntityWordsSet;
@@ -37,14 +34,19 @@ public class IntersectionFinder {
         if (nGramLength == 1) {
             return (List) (((ArrayList) words).clone());
         }
+
         List<String> nGrams = new ArrayList<>();
         for (int index = 0; index < words.size() - nGramLength; index++) {
-            nGrams.add(words
-                    .subList(index, index + nGramLength)
-                    .stream()
-                    .reduce((a, b) -> a + " " + b)
-                    .get());
+            Optional<String> reduced =
+                    words
+                        .subList(index, index + nGramLength)
+                        .stream()
+                        .reduce((a, b) -> a + " " + b);
+
+            if(reduced.isPresent())
+                nGrams.add(reduced.get());
         }
+
         return nGrams;
     }
 
@@ -56,6 +58,9 @@ public class IntersectionFinder {
             sourceEntityWordsSet = createSet();
         }
         List<String> targetNgrams = createNgrams(targetWords);
+        if(targetNgrams.size() == 0) // targetWords.size() == nGramLength
+            return 0.0;
+
         Double intersectionSize = ((Long) (targetNgrams.stream()
                 .filter(ngram -> sourceEntityWordsSet
                         .contains(ngram)).count())).doubleValue();

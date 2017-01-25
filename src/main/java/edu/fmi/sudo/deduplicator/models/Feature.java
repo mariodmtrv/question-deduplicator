@@ -46,7 +46,7 @@ public abstract class Feature {
             this.featureValue = new ArrayList<>();
             this.process();
         }
-        if (id > featureValue.size()) {
+        if (id >= featureValue.size()) {
             throw new IllegalStateException("Dimensionality mismatch");
         }
         return featureValue.get(id);

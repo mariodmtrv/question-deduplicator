@@ -1,6 +1,6 @@
 package edu.fmi.sudo.deduplicator.pipeline;
 
-public enum PipelineFeature {
+public enum PipelinePreProcessTask {
     GENERAL_STOPWORDS_REMOVAL,
     SPECIALIZED_STOPWORDS_REMOVAL,
     POS_TAGGING,

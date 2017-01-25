@@ -5,13 +5,13 @@ import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
-import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
 import edu.fmi.sudo.deduplicator.training.SvmClassifierAdapter;
 import edu.fmi.sudo.deduplicator.training.SvmLearnerAdapter;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,10 +21,21 @@ import java.util.List;
  * The pipeline's backbone, used to wire the enabled pipeline features
  */
 public class MainPipeline {
-    private List<PipelineFeature> enabledFeatures;
-    private DataAccessFactory daf;
+    // defaults
+    private List<PipelinePreProcessTask> pipelinePreProcessFeatures =
+            Collections.unmodifiableList(
+                    Arrays.asList(
+                            PipelinePreProcessTask.GENERAL_STOPWORDS_REMOVAL,
+                            PipelinePreProcessTask.SPECIALIZED_STOPWORDS_REMOVAL,
+                            PipelinePreProcessTask.MAGIC_WORDS,
+                            PipelinePreProcessTask.WSD,
+                            PipelinePreProcessTask.POS_TAGGING,
+                            PipelinePreProcessTask.TOKENIZATION
+                    )
+            );
+    private LocalDataAccessFactory daf;
     private Long executionIdentifier = 1000L;
-    // use pipeline features?
+    // defaults
     private List<Feature> features =
             Collections.unmodifiableList(
                     Arrays.asList(  new BiGramsFeature()
@@ -35,31 +46,35 @@ public class MainPipeline {
                             , new PosTaggingProportionsFeature()
                             , new UserVotesFeature()));
 
-    MainPipeline() {
-        enabledFeatures = new ArrayList<>();
-    }
-
-    MainPipeline(List<PipelineFeature> features, DataAccessFactory daf) {
-        this.enabledFeatures = features;
+    public MainPipeline(List<PipelinePreProcessTask> preProcessTasks, List<Feature> features, LocalDataAccessFactory daf) {
+        this.pipelinePreProcessFeatures = preProcessTasks;
+        this.features = features;
         this.daf = daf;
     }
 
+    public void run(boolean train) {
+        if(train) {
+            System.out.println("INFO: TRAIN execution of Pipeline initiated");
+            trainModel();
+            System.out.println("INFO: TRAIN execution of Pipeline completed successfully");
+        } else {
+            System.out.println("INFO: TEST execution of Pipeline initiated");
+            testGeneratedModel();
+            System.out.println("INFO: TEST execution of Pipeline completed successfully");
+        }
+    }
+
     /**
-     * Applies the filters of the pipeline in the order the features are given
+     * Applies the pre-process features of the pipeline in the order given
      */
-    public List<QuestionAnswers> process() {
-        List<QuestionAnswers> processed = new ArrayList<>();
+    private QuestionAnswers preProcess(QuestionAnswers qa) {
 
         try {
-            for(QuestionAnswers qa: daf.getAllObjects()) {
-                for (PipelineFeature feature : enabledFeatures) {
-                    qa = PipelineFilter.process(feature, qa);
-                }
-
-                processed.add(qa);
+            for (PipelinePreProcessTask feature : pipelinePreProcessFeatures) {
+                qa = PipelinePreProcessor.process(feature, qa);
             }
 
-            return processed;
+            return qa;
         } catch(RuntimeException e) { // expected exception time from pipeline filters
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -68,31 +83,39 @@ public class MainPipeline {
 
     // multithreaded execution...
 
-    public void trainModel(LocalDataAccessFactory dataAccessFactory) {
+    public void trainModel() {
         DataSetGenerator trainSetGenerator = new DataSetGenerator(DataSetType.TRAIN, executionIdentifier);
         QuestionAnswers questionAnswer = null;
         Integer queryid = 0;
-        while (dataAccessFactory.hasNextTrain()) {
-            questionAnswer = dataAccessFactory.getNextTrainEntry();
+
+        daf.initializeTrainCursor();
+        while (daf.hasNextTrain()) {
+            questionAnswer = preProcess(daf.getNextTrainEntry());
             FeatureVector featureVector = new FeatureVector(questionAnswer, true, ++queryid);
             List<Feature> trainingFeatures = features;
             featureVector.setFeatures(trainingFeatures);
             trainSetGenerator.writeEntry(featureVector.getValues());
         }
+        daf.closeTrainCursor();
+
         SvmLearnerAdapter learner = new SvmLearnerAdapter(executionIdentifier);
         learner.execute();
     }
 
-    public void testGeneratedModel(LocalDataAccessFactory daf) {
+    public void testGeneratedModel() {
         DataSetGenerator testSetGenerator = new DataSetGenerator(DataSetType.TEST, executionIdentifier);
         QuestionAnswers questionAnswers = null;
         Integer queryid = 0;
+
+        daf.initializeTestCursor();
         while (daf.hasNextTest()) {
-            questionAnswers = daf.getNextTestEntry();
+            questionAnswers = preProcess(daf.getNextTestEntry());
             FeatureVector featureVector = new FeatureVector(questionAnswers, false, ++queryid);
             featureVector.setFeatures(features);
             testSetGenerator.writeEntry(featureVector.getValues());
         }
+        daf.closeTestCursor();
+
         SvmClassifierAdapter classifier = new SvmClassifierAdapter(executionIdentifier);
         classifier.execute();
     }

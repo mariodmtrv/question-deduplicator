@@ -69,8 +69,18 @@ public class LocalDataAccessFactory extends DataAccessFactory {
         trainCursor.open(database, Collection.QUESTION_ANSWERS.getName(), new BasicDBObject("train", true));
     }
 
+    public void closeTrainCursor() {
+        if(trainCursor != null)
+            trainCursor.close();
+    }
+
     public void initializeTestCursor() {
         testCursor.open(database, Collection.QUESTION_ANSWERS.getName(), new BasicDBObject("train", false));
+    }
+
+    public void closeTestCursor() {
+        if(testCursor != null)
+            testCursor.close();
     }
 
     public boolean hasNextTrain() {

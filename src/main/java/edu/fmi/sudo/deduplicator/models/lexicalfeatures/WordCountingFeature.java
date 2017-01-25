@@ -12,6 +12,7 @@ import edu.fmi.sudo.deduplicator.models.Feature;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class WordCountingFeature extends Feature {
     protected IntersectionFinder intersectionFinder;
@@ -44,11 +45,16 @@ public abstract class WordCountingFeature extends Feature {
     }
 
     private Double getCommentsIntersectionSize(List<RelatedComment> comments) {
-        if (comments == null) {
+        if (comments == null || comments.size() == 0) {
             return 0.0;
         }
-        return comments.stream()
+        Optional<Double> reduced = comments.stream()
                 .map(comment -> intersectionFinder.getIntersectionSize(comment.getTextTokens()))
-                .reduce((a, b) -> a + b).get();
+                .reduce((a, b) -> a + b);
+
+        if(reduced.isPresent())
+            return reduced.get();
+        else
+            return 0.0;
     }
 }
