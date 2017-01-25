@@ -92,8 +92,7 @@ public class MainPipeline {
         while (daf.hasNextTrain()) {
             questionAnswer = preProcess(daf.getNextTrainEntry());
             FeatureVector featureVector = new FeatureVector(questionAnswer, true);
-            List<Feature> trainingFeatures = features;
-            featureVector.setFeatures(trainingFeatures);
+            featureVector.setFeatures(features);
             trainSetGenerator.writeEntry(featureVector.getValues());
         }
         daf.closeTrainCursor();
@@ -105,7 +104,6 @@ public class MainPipeline {
     public void testGeneratedModel() {
         DataSetGenerator testSetGenerator = new DataSetGenerator(DataSetType.TEST, executionIdentifier);
         QuestionAnswers questionAnswers = null;
-        Integer queryid = 0;
 
         daf.initializeTestCursor();
         while (daf.hasNextTest()) {
