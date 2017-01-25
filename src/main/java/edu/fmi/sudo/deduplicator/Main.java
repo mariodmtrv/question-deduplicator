@@ -28,6 +28,10 @@ public class Main {
         String filename = args[1];
         System.out.println("INFO: Input file set to: " + filename);
 
+        // XML file validation could be performed here (if not comment it out)
+//        if(!XMLValidator.validate(filename))
+//            throw new RuntimeException("FATAL: File validation failed");
+
         if(args[0].equals("train"))
             train(Paths.get(filename).toString());
         else

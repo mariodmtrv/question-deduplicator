@@ -21,10 +21,11 @@ import java.util.*;
  * @author Miroslav Kramolinski
  */
 public class XMLReader {
-    public static void readFile(String filename, boolean train) {
+    public static synchronized void readFile(String filename, boolean train) {
         Map<String, QuestionAnswers> questionAnswers = new HashMap<>(); // Pair of ORGQ_ID and the QuestionAnswer object
         LocalDataAccessFactory daf = new LocalDataAccessFactory();
         daf.prepareDB();
+        Integer entriesCount = 0;
 
         try {
             File input = new File(filename);
@@ -56,8 +57,10 @@ public class XMLReader {
                     questionAnswers.get(origId).addThread(thread);
 
                     if(questionAnswers.get(origId).getThreads().size() >= 50) {
-                        if(!daf.exists(Collection.QUESTION_ANSWERS.getName(), "question.id", origId))
+                        if(!daf.exists(Collection.QUESTION_ANSWERS.getName(), "question.id", origId)) {
                             daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(origId));
+                            entriesCount++;
+                        }
 
                         questionAnswers.remove(origId); // we need to keep the collection as little as possible
                     }
@@ -68,12 +71,15 @@ public class XMLReader {
             // Collect the remaining (if any) objects
             for(String id: questionAnswers.keySet()) {
                 daf.insertObject(Collection.QUESTION_ANSWERS.getName(), questionAnswers.get(id));
+                entriesCount ++;
             }
         } catch (ParserConfigurationException|IOException|SAXException e) {
             e.printStackTrace();
         } finally {
             daf.close();
         }
+
+        System.out.println("INFO: " + entriesCount + " entries successfully inserted to database");
     }
 
     private static RelatedQuestion getRelatedQuestionData(Element thread) {
@@ -84,13 +90,25 @@ public class XMLReader {
             return new RelatedQuestion(
                 relatedQuestion.getAttribute("RELQ_ID"),
                 relatedQuestion.getAttribute("RELQ_CATEGORY"),
-                df.parse(relatedQuestion.getAttribute("RELQ_DATE")),
-                Integer.parseInt(relatedQuestion.getAttribute("RELQ_RANKING_ORDER")),
-                Integer.parseInt(relatedQuestion.getAttribute("RELQ_SCORE")),
-                Integer.parseInt(relatedQuestion.getAttribute("RELQ_VIEWCOUNT")),
-                Relevance.valueOf(relatedQuestion.getAttribute("RELQ_RELEVANCE2ORGQ")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_DATE"))?
+                        df.parse("1900-01-01 00:00:00"):
+                        df.parse(relatedQuestion.getAttribute("RELQ_DATE")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_RANKING_ORDER"))?
+                        0:
+                        Integer.parseInt(relatedQuestion.getAttribute("RELQ_RANKING_ORDER")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_SCORE"))?
+                        0:
+                        Integer.parseInt(relatedQuestion.getAttribute("RELQ_SCORE")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_VIEWCOUNT"))?
+                        0:
+                        Integer.parseInt(relatedQuestion.getAttribute("RELQ_VIEWCOUNT")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_RELEVANCE2ORGQ"))?
+                        Relevance.Irrelevant:
+                        Relevance.valueOf(relatedQuestion.getAttribute("RELQ_RELEVANCE2ORGQ")),
                 Arrays.asList(relatedQuestion.getAttribute("RELQ_TAGS").split(", ")),
-                Integer.parseInt(relatedQuestion.getAttribute("RELQ_USERID")),
+                isEmpty(relatedQuestion.getAttribute("RELQ_USERID"))?
+                        0:
+                        Integer.parseInt(relatedQuestion.getAttribute("RELQ_USERID")),
                 relatedQuestion.getAttribute("RELQ_USERNAME"),
                 relatedQuestion.getElementsByTagName("RelQSubject").item(0).getTextContent(),
                 relatedQuestion.getElementsByTagName("RelQBody").item(0).getTextContent()
@@ -111,11 +129,19 @@ public class XMLReader {
             try {
                 relatedAnswers.add(new RelatedAnswer(
                     element.getAttribute("RELA_ID"),
-                    df.parse(element.getAttribute("RELA_DATE")),
-                    Integer.parseInt(element.getAttribute("RELA_USERID")),
+                    isEmpty(element.getAttribute("RELA_DATE"))?
+                            df.parse("1900-01-01 00:00:00"):
+                            df.parse(element.getAttribute("RELA_DATE")),
+                    isEmpty(element.getAttribute("RELA_USERID"))?
+                            0:
+                            Integer.parseInt(element.getAttribute("RELA_USERID")),
                     element.getAttribute("RELA_USERNAME"),
-                    Integer.parseInt(element.getAttribute("RELA_SCORE")),
-                    Boolean.parseBoolean(element.getAttribute("RELA_ACCEPTED")),
+                    isEmpty(element.getAttribute("RELA_SCORE"))?
+                            0:
+                            Integer.parseInt(element.getAttribute("RELA_SCORE")),
+                    isEmpty(element.getAttribute("RELA_ACCEPTED"))?
+                            Boolean.FALSE:
+                            Boolean.parseBoolean(element.getAttribute("RELA_ACCEPTED")),
                     element.getElementsByTagName("RelAText").item(0).getTextContent(),
                     getRelatedCommentsData(element, true)
                 ));
@@ -138,10 +164,16 @@ public class XMLReader {
             try {
                 relatedComments.add(new RelatedComment(
                     element.getAttribute(forAnswer? "RELAC_ID": "RELC_ID"),
-                    df.parse(element.getAttribute(forAnswer? "RELAC_DATE": "RELC_DATE")),
-                    Integer.parseInt(element.getAttribute(forAnswer? "RELAC_USERID": "RELC_USERID")),
+                    isEmpty(element.getAttribute(forAnswer? "RELAC_DATE": "RELC_DATE"))?
+                                df.parse("1900-01-01 00:00:00"):
+                                df.parse(element.getAttribute(forAnswer? "RELAC_DATE": "RELC_DATE")),
+                    isEmpty(element.getAttribute(forAnswer? "RELAC_USERID": "RELC_USERID"))?
+                            0:
+                            Integer.parseInt(element.getAttribute(forAnswer? "RELAC_USERID": "RELC_USERID")),
                     element.getAttribute(forAnswer? "RELAC_USERNAME": "RELC_USERNAME"),
-                    Integer.parseInt(element.getAttribute(forAnswer? "RELAC_SCORE": "RELC_SCORE")),
+                    isEmpty(element.getAttribute(forAnswer? "RELAC_SCORE": "RELC_SCORE"))?
+                            0:
+                            Integer.parseInt(element.getAttribute(forAnswer? "RELAC_SCORE": "RELC_SCORE")),
                     element.getElementsByTagName(forAnswer? "RelACText": "RelCText").item(0).getTextContent()
                 ));
             } catch (ParseException e) {
@@ -150,5 +182,9 @@ public class XMLReader {
         }
 
         return relatedComments;
+    }
+
+    private static boolean isEmpty(String s) {
+        return s == null || s.length() == 0;
     }
 }
