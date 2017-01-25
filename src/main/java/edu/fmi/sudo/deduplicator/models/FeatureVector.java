@@ -41,6 +41,11 @@ public class FeatureVector {
             if (isTrain) {
                 mappedEntry = String.format("%s qid:%d %s", labelFeature.getEntryValue(index), qa.getQuestion().getId(), mappedEntry);
             }
+            else{
+                //indicate no preference in ranking
+                mappedEntry = String.format("%s qid:%d %s", 0, qa.getQuestion().getId(), mappedEntry);
+
+            }
 
             mappedEntry = mappedEntry + " " + vectorMetadata.getEntryValue(index);
             matrix.add(mappedEntry);
