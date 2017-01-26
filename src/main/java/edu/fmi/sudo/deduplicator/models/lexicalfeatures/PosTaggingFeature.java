@@ -7,6 +7,8 @@ import gate.Corpus;
 import gate.CorpusController;
 import gate.Document;
 import gate.Factory;
+import gate.creole.ResourceInstantiationException;
+import gate.persist.PersistenceException;
 import gate.util.GateException;
 import gate.util.persistence.PersistenceManager;
 
@@ -25,30 +27,22 @@ import java.util.stream.Collectors;
  * Created by mateev on 19.1.2017 г..
  */
 public abstract  class PosTaggingFeature extends Feature {
+    private CorpusController application;
+
     @Override
     public void process() {
         try {
             // initialise GATE - this must be done before calling any GATE APIs
             GateWrapper.init();
 
-            // load the saved application
-            String appPath = "src\\main\\resources\\modules\\gate\\gate-pos-app.gapp";
-
-            InputStream appStream = getClass().getClassLoader()
-                    .getResourceAsStream("modules/gate/gate-pos-app.gapp");
-
-            Files.copy(appStream, Paths.get("./gate-pos-app.gapp"), StandardCopyOption.REPLACE_EXISTING);
-
-            CorpusController application =
-                    (CorpusController) PersistenceManager.loadObjectFromFile(
-                            new File("./gate-pos-app.gapp"));
+            initGateApp();
 
             // Create a Corpus to use.  We recycle the same Corpus object for each
             // iteration.  The string parameter to newCorpus() is simply the
             // GATE-internal name to use for the corpus.  It has no particular
             // significance.
             Corpus corpus = Factory.newCorpus("SemEval corpus");
-            application.setCorpus(corpus);
+            this.application.setCorpus(corpus);
 
             Document orgQuestionSubjectDoc = Factory.newDocument(
                     this.questionAnswers.getQuestion().getSubject());
@@ -59,7 +53,7 @@ public abstract  class PosTaggingFeature extends Feature {
             corpus.add(orgQuestionSubjectDoc);
             corpus.add(orgQuestionBodyDoc);
 
-            application.execute();
+            this.application.execute();
 
             corpus.clear();
 
@@ -72,7 +66,7 @@ public abstract  class PosTaggingFeature extends Feature {
                 corpus.add(relQuestionSubjectDoc);
                 corpus.add(relQuestionBodyDoc);
 
-                application.execute();
+                this.application.execute();
 
                 //Process annotations
                 String vector = processFeatureMetrics(
@@ -95,6 +89,20 @@ public abstract  class PosTaggingFeature extends Feature {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void initGateApp() throws IOException, PersistenceException, ResourceInstantiationException {
+        if (this.application == null) {
+
+            InputStream appStream = getClass().getClassLoader()
+                    .getResourceAsStream("modules/gate/gate-pos-app.gapp");
+
+            Files.copy(appStream, Paths.get("./gate-pos-app.gapp"), StandardCopyOption.REPLACE_EXISTING);
+
+            this.application =
+                    (CorpusController) PersistenceManager.loadObjectFromFile(
+                            new File("./gate-pos-app.gapp"));
         }
     }
 
