@@ -1,19 +1,16 @@
 package edu.fmi.sudo.deduplicator.pipeline;
 
-import edu.fmi.sudo.deduplicator.dal.DataAccessFactory;
+import edu.fmi.sudo.deduplicator.Logger;
 import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
-import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
 import edu.fmi.sudo.deduplicator.training.SvmClassifierAdapter;
 import edu.fmi.sudo.deduplicator.training.SvmLearnerAdapter;
 
-import java.nio.channels.Pipe;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,13 +52,13 @@ public class MainPipeline {
 
     public void run(boolean train) {
         if(train) {
-            System.out.println("INFO: TRAIN execution of Pipeline initiated");
+            Logger.log("INFO: TRAIN execution of Pipeline initiated");
             trainModel();
-            System.out.println("INFO: TRAIN execution of Pipeline completed successfully");
+            Logger.log("INFO: TRAIN execution of Pipeline completed successfully");
         } else {
-            System.out.println("INFO: TEST execution of Pipeline initiated");
+            Logger.log("INFO: TEST execution of Pipeline initiated");
             testGeneratedModel();
-            System.out.println("INFO: TEST execution of Pipeline completed successfully");
+            Logger.log("INFO: TEST execution of Pipeline completed successfully");
         }
     }
 

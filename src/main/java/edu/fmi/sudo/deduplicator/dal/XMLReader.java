@@ -1,5 +1,6 @@
 package edu.fmi.sudo.deduplicator.dal;
 
+import edu.fmi.sudo.deduplicator.Logger;
 import edu.fmi.sudo.deduplicator.entities.*;
 import edu.fmi.sudo.deduplicator.entities.Thread;
 import org.w3c.dom.Document;
@@ -79,7 +80,7 @@ public class XMLReader {
             daf.close();
         }
 
-        System.out.println("INFO: " + entriesCount + " entries successfully inserted to database");
+        Logger.log("INFO: " + entriesCount + " entries successfully inserted to database");
     }
 
     private static RelatedQuestion getRelatedQuestionData(Element thread) {

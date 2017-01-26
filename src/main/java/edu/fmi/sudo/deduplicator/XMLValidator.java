@@ -55,7 +55,7 @@ public class XMLValidator {
             e.printStackTrace();
         }
 
-        System.out.println("INFO: Validation of tag balance successful");
+        Logger.log("INFO: Validation of tag balance successful");
 
         return true;
     }
