@@ -12,7 +12,11 @@ import gate.util.persistence.PersistenceManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +33,15 @@ public abstract  class PosTaggingFeature extends Feature {
 
             // load the saved application
             String appPath = "src\\main\\resources\\modules\\gate\\gate-pos-app.gapp";
+
+            InputStream appStream = getClass().getClassLoader()
+                    .getResourceAsStream("modules/gate/gate-pos-app.gapp");
+
+            Files.copy(appStream, Paths.get("./gate-pos-app.gapp"), StandardCopyOption.REPLACE_EXISTING);
+
             CorpusController application =
                     (CorpusController) PersistenceManager.loadObjectFromFile(
-                            new File(appPath));
+                            new File("./gate-pos-app.gapp"));
 
             // Create a Corpus to use.  We recycle the same Corpus object for each
             // iteration.  The string parameter to newCorpus() is simply the
