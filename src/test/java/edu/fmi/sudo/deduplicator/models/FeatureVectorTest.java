@@ -1,5 +1,3 @@
-
-
 package edu.fmi.sudo.deduplicator.models;
 
 import edu.fmi.sudo.deduplicator.entities.*;
@@ -53,7 +51,7 @@ public class FeatureVectorTest {
 
     @Test
     public void testMatrixGeneration() {
-        FeatureVector featureVector = new FeatureVector(qa, true, 175);
+        FeatureVector featureVector = new FeatureVector(qa, true);
         featureVector.setFeatures(features);
         featureVector.getValues();
     }

@@ -39,7 +39,7 @@ public class FeatureVector {
             String mappedEntry = reducedEntry.isPresent()? reducedEntry.get(): "";
 
             if (isTrain) {
-                mappedEntry = String.format("%s qid:%d %s", labelFeature.getEntryValue(index), qa.getQuestion().getId(), mappedEntry);
+                mappedEntry = String.format("%s qid:%s %s", labelFeature.getEntryValue(index), qa.getQuestion().getId(), mappedEntry);
             }
             else{
                 //indicate no preference in ranking
