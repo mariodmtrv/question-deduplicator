@@ -1,21 +1,25 @@
 package edu.fmi.sudo.deduplicator.training;
 
+import edu.fmi.sudo.deduplicator.config.Configuration;
+
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
 public class DataSetGenerator {
     // well, not really...
-    private String rootPath = "src\\main\\resources\\";
     private DataSetType dataSetType;
     private Long identifier;
     private BufferedWriter writer;
-
+    private String rootPath =  new File(System.getProperty("user.dir")).getParent() + "\\feature-vectors\\";
 
     public DataSetGenerator(DataSetType dataSetType, Long identifier) {
         this.dataSetType = dataSetType;
         String path = rootPath + String.format(dataSetType.pattern, identifier.toString());
+        System.out.println(path);
+        boolean createdForDataType = new File(path.substring(0, path.length() - path.substring(path.lastIndexOf('\\')).length())).mkdirs();
         try {
             this.writer = new BufferedWriter(new FileWriter(path));
         } catch (IOException e) {

@@ -24,6 +24,7 @@ public abstract class Feature {
     }
 
     public void setQuestionAnswers(QuestionAnswers qa) {
+        this.featureValue = null;
         this.questionAnswers = qa;
     }
 
