@@ -2,17 +2,18 @@ package edu.fmi.sudo.deduplicator.pipeline;
 
 import edu.fmi.sudo.deduplicator.entities.*;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GeneralStopwordsRemovalFilter {
-    private static final String stopwordsFile = "src\\main\\resources\\pipeline\\stopwords.txt";
+    private static final String stopwordsFile = "pipeline/stopwords.txt";
+    private static final Set<String> stopWords = new HashSet<>();
 
     public static QuestionAnswers process(QuestionAnswers qa) {
         OriginalQuestion oq = qa.getQuestion();
@@ -44,21 +45,36 @@ public class GeneralStopwordsRemovalFilter {
         // returning an empty result in case the text consists entirely of stop words
         text = (text == null? "": text) + " dummy";
 
-        try(Stream<String> stream = Files.lines(Paths.get(stopwordsFile))) {
-            final Set<String> stopwords = stream.collect(Collectors.toSet());
-            String[] words = text.split(" ");
-            Optional<String> reduced = Arrays.stream(words)
-                    .filter(x -> !stopwords.contains(x))
-                    .reduce((x, y) -> x + " " + y);
+        readStopWords();
 
-            if(reduced.isPresent())
-                return reduced.get();
+        String[] words = text.split(" ");
+        Optional<String> reduced = Arrays.stream(words)
+                .filter(x -> !stopWords.contains(x))
+                .reduce((x, y) -> x + " " + y);
 
-            return "";
+        if(reduced.isPresent())
+            return reduced.get();
+
+        return "";
+    }
+
+    private static void readStopWords() {
+        if (GeneralStopwordsRemovalFilter.stopWords.size() > 0) return;
+
+        InputStream stopWordsStream = GeneralStopwordsRemovalFilter.class.getClassLoader()
+                .getResourceAsStream(stopwordsFile);
+
+        InputStreamReader stopWordsInputReader = new InputStreamReader(stopWordsStream);
+        BufferedReader stopWordsReader = new BufferedReader(stopWordsInputReader);
+
+        String stopWord;
+        try {
+            while ((stopWord = stopWordsReader.readLine()) != null) {
+                GeneralStopwordsRemovalFilter.stopWords.add(stopWord);
+            }
+            stopWordsReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 }
