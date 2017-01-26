@@ -1,7 +1,9 @@
 package edu.fmi.sudo.deduplicator.training;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public abstract class SvmAdapter {
     protected String executablePath;
@@ -16,8 +18,14 @@ public abstract class SvmAdapter {
 
     private void execute(String[] params) {
         try {
-            Process result = Runtime.getRuntime().exec("./" + this.executablePath, params, new File(new File(this.executablePath).getParent()));
-       System.out.println(result.getOutputStream());
+            String parentDir = new File(this.executablePath).getParent();
+            Process process = Runtime.getRuntime().exec( this.executablePath, params, new File(parentDir));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

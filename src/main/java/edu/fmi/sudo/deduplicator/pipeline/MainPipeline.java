@@ -1,19 +1,15 @@
 package edu.fmi.sudo.deduplicator.pipeline;
 
-import edu.fmi.sudo.deduplicator.dal.DataAccessFactory;
 import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
-import edu.fmi.sudo.deduplicator.models.TrainDataLabel;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
 import edu.fmi.sudo.deduplicator.training.DataSetGenerator;
 import edu.fmi.sudo.deduplicator.training.DataSetType;
 import edu.fmi.sudo.deduplicator.training.SvmClassifierAdapter;
 import edu.fmi.sudo.deduplicator.training.SvmLearnerAdapter;
 
-import java.nio.channels.Pipe;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +89,8 @@ public class MainPipeline {
             questionAnswer = preProcess(daf.getNextTrainEntry());
             FeatureVector featureVector = new FeatureVector(questionAnswer, true);
             featureVector.setFeatures(features);
-            trainSetGenerator.writeEntry(featureVector.getValues());
+            List<String> values = featureVector.getValues();
+            trainSetGenerator.writeEntry(values);
         }
         daf.closeTrainCursor();
 
@@ -110,7 +107,8 @@ public class MainPipeline {
             questionAnswers = preProcess(daf.getNextTestEntry());
             FeatureVector featureVector = new FeatureVector(questionAnswers, false);
             featureVector.setFeatures(features);
-            testSetGenerator.writeEntry(featureVector.getValues());
+            List<String> values = featureVector.getValues();
+            testSetGenerator.writeEntry(values);
         }
         daf.closeTestCursor();
 

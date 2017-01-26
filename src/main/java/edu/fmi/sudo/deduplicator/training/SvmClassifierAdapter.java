@@ -12,7 +12,7 @@ public class SvmClassifierAdapter extends SvmAdapter {
 
     public SvmClassifierAdapter(Long identifier) {
         super(identifier);
-        this.executablePath = "src\\main\\resources\\modules\\svm\\svm_rank_classify.exe";
+        this.executablePath = new File(System.getProperty("user.dir")) + "\\src\\main\\resources\\modules\\svm\\svm_rank_classify.exe";
         String testDataFile = this.resourcesRootPath + String.format(DataSetType.TEST.pattern, identifier.toString());
         String modelFile = String.format(this.modelPath, identifier.toString());
         String predictionFile = this.resourcesRootPath + String.format(predictionRel, identifier.toString());
