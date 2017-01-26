@@ -8,7 +8,7 @@ public class SvmTest {
     @Test
     public void testSvm() {
         SvmLearnerAdapter learnerAdapter = new SvmLearnerAdapter(123L);
-       // learnerAdapter.execute();
+       //learnerAdapter.execute();
         SvmClassifierAdapter classifierAdapter = new SvmClassifierAdapter(123L);
        // classifierAdapter.execute();
     }
