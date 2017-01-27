@@ -45,7 +45,7 @@ public class FeatureVector {
             }
             else{
                 //indicate no preference in ranking
-                mappedEntry = String.format("%s qid:%d %s", 0,  qaNo.toString(), mappedEntry);
+                mappedEntry = String.format("%s qid:%s %s", 0,  qaNo.toString(), mappedEntry);
 
             }
 
