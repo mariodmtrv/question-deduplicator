@@ -48,7 +48,7 @@ public class EvaluatorTest {
         }
 
         Evaluator evaluator = new Evaluator();
-        evaluator.prepareClassifierOutput(pathToTest, pathToPrediction, "android");
+        evaluator.evaluate(pathToTest, pathToPrediction, "android");
 
         try {
             //List<String> lines = Files.lines(Paths.get(Evaluator.getEvaluationPath() + "android_results.pred")).collect(Collectors.toList());

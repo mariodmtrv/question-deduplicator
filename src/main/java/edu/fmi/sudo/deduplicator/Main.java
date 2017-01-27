@@ -142,11 +142,6 @@ public class Main {
 
         pipeline.run(false);
 
-//        String pathToSVM = ".\\predictions";
-//        Evaluator evaluator = new Evaluator();
-        //data should be the original question-related question pairs, ordered as in the file with the predictions.
-        //evaluator.evaluate(data, pathToSVM, "android");
-
         daf.close();
     }
 

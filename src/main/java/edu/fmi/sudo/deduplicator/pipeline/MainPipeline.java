@@ -3,6 +3,7 @@ package edu.fmi.sudo.deduplicator.pipeline;
 import edu.fmi.sudo.deduplicator.Logger;
 import edu.fmi.sudo.deduplicator.dal.LocalDataAccessFactory;
 import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
+import edu.fmi.sudo.deduplicator.evaluation.Evaluator;
 import edu.fmi.sudo.deduplicator.models.Feature;
 import edu.fmi.sudo.deduplicator.models.FeatureVector;
 import edu.fmi.sudo.deduplicator.models.lexicalfeatures.*;
@@ -113,5 +114,8 @@ public class MainPipeline {
 
         SvmClassifierAdapter classifier = new SvmClassifierAdapter(executionIdentifier);
         classifier.execute();
+
+        Evaluator evaluator = new Evaluator();
+        evaluator.evaluate(classifier.getTestDataFile(), classifier.getPredictionFile(), "android");
     }
 }

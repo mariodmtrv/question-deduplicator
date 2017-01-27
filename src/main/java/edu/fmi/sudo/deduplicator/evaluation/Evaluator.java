@@ -5,12 +5,10 @@
  */
 package edu.fmi.sudo.deduplicator.evaluation;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +16,7 @@ import java.util.stream.Collectors;
 
 public class Evaluator {
 
-    private static String evaluatorPath = "src\\main\\resources\\modules\\evaluation\\";
     private Map<String, String> categoriesMap = new HashMap<String, String>();
-
-    public static String getEvaluationPath () {
-        return evaluatorPath;
-    }
 
     public Evaluator() {
         this.categoriesMap.put("android", "stackexchange_android_devel.xml.subtaskE.relevancy.bm25");
@@ -35,15 +28,35 @@ public class Evaluator {
     public void evaluate(String pathToTestData, String pathToClassifiedData, String category) {
         prepareClassifierOutput(pathToTestData, pathToClassifiedData, category);
 
-        String command = String.format("python %1$sev.py %1$s%2$s .\\%3$s_results.pred",
-                this.evaluatorPath,
-                this.categoriesMap.get(category),
-                category);
         try {
-            Runtime.getRuntime().exec(command);
+            copyFileFromResources("ev.py");
+            copyFileFromResources("metrics.py");
+            copyFileFromResources("res_file_reader.py");
+            copyFileFromResources(this.categoriesMap.get(category));
+
+            String command = String.format("python ./ev.py ./%s ./%s_results.pred",
+                    this.categoriesMap.get(category),
+                    category);
+
+            Process process = Runtime.getRuntime().exec(command);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void copyFileFromResources(String fileName) throws IOException {
+        InputStream exeStream = getClass().getClassLoader()
+                .getResourceAsStream("evaluation/" + fileName);
+
+        Files.copy(exeStream, Paths.get("./" + fileName), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public void prepareClassifierOutput(String pathToTestData, String pathToClassifiedData, String category) {
