@@ -31,8 +31,11 @@ public class CosSimilarityFeature extends Feature {
                                     .map(question -> question.getTextTokens())
                                     .flatMap(x -> x.stream())
                                     .collect(Collectors.toList());
-                            Double answersSimilarity =
-                                    computeCosSimilarity(originalQuestionMap, joinedAnswers);
+                            Double answersSimilarity = 0.0;
+                            if (joinedAnswers.size() > 0) {
+                                answersSimilarity =
+                                        computeCosSimilarity(originalQuestionMap, joinedAnswers);
+                            }
                             return new Pair(questionSimilarity, answersSimilarity);
                         }).collect(Collectors.toList());
         List<String> normalizedQuestionSimilarities =
@@ -43,9 +46,9 @@ public class CosSimilarityFeature extends Feature {
                 Feature.normalizeValues(relatedQuestionsSimilarities.stream()
                         .map(pair -> (Double) pair.getValue())
                         .collect(Collectors.toList()));
-        featureValue = IntStream.range(0, normalizedQuestionSimilarities.size())
+        this.featureValue = IntStream.range(0, normalizedQuestionSimilarities.size())
                 .mapToObj(id ->
-                        normalizedQuestionSimilarities.get(id) + ", "
+                        normalizedQuestionSimilarities.get(id) + ","
                                 + normalizedAnswerSimilarities.get(id))
                 .collect(Collectors.toList());
 
