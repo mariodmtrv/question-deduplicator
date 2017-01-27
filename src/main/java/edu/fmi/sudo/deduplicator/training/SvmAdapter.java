@@ -18,11 +18,17 @@ public abstract class SvmAdapter {
 
     private void execute(String[] params) {
         try {
-            String parentDir = new File(this.executablePath).getParent();
-            Process process = Runtime.getRuntime().exec( this.executablePath, params, new File(parentDir));
+            String command = String.format("%s %s %s %s",
+                    this.executablePath,
+                    params[0],
+                    params[1],
+                    params[2]);
+
+            Process process = Runtime.getRuntime().exec(command);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
-            String line = null;
+
+            String line;
             while ((line = in.readLine()) != null) {
                 System.out.println(line);
             }
