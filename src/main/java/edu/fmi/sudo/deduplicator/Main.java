@@ -85,6 +85,7 @@ public class Main {
         MainPipeline pipeline = new MainPipeline(
                 Collections.unmodifiableList(
                         Arrays.asList(
+                                PipelinePreProcessTask.HTML_UNESCAPE,
                                 PipelinePreProcessTask.GENERAL_STOPWORDS_REMOVAL,
                                 PipelinePreProcessTask.SPECIALIZED_STOPWORDS_REMOVAL,
                                 PipelinePreProcessTask.MAGIC_WORDS,
@@ -119,6 +120,7 @@ public class Main {
         MainPipeline pipeline = new MainPipeline(
                 Collections.unmodifiableList(
                         Arrays.asList(
+                                PipelinePreProcessTask.HTML_UNESCAPE,
                                 PipelinePreProcessTask.GENERAL_STOPWORDS_REMOVAL,
                                 PipelinePreProcessTask.SPECIALIZED_STOPWORDS_REMOVAL,
                                 PipelinePreProcessTask.MAGIC_WORDS,

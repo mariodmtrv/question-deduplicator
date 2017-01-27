@@ -48,9 +48,29 @@ public class GeneralStopwordsRemovalFilter {
         readStopWords();
 
         String[] words = text.split(" ");
+        for(int i = 0; i < words.length; i ++) {
+            if(words[i] == null || words[i].isEmpty())
+                continue;
+
+            if(stopWords.contains(words[i]))
+                words[i] = "";
+            else {
+                for(String stopWord: stopWords) {
+                    // Remove the prefix/suffix stop words from the main word (like exclamation mark)
+                    if(stopWord != null && stopWord.toLowerCase().charAt(0) < 'a' && stopWord.toLowerCase().charAt(0) > 'z') {
+                        if(words[i].startsWith(stopWord))
+                            words[i] = words[i].substring(stopWord.length());
+                        else if(words[i].endsWith(stopWord))
+                            words[i] = words[i].substring(0, words[i].length() - stopWord.length());
+                    }
+
+                }
+            }
+        }
+
         Optional<String> reduced = Arrays.stream(words)
-                .filter(x -> !stopWords.contains(x))
-                .reduce((x, y) -> x + " " + y);
+                                        .filter(x -> x != null && !x.isEmpty())
+                                        .reduce((x, y) -> x + " " + y);
 
         if(reduced.isPresent())
             return reduced.get();

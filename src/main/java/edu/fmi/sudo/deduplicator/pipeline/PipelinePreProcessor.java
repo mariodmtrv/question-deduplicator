@@ -5,6 +5,8 @@ import edu.fmi.sudo.deduplicator.entities.QuestionAnswers;
 public class PipelinePreProcessor {
     public static QuestionAnswers process(PipelinePreProcessTask filter, QuestionAnswers qa) {
         switch(filter) {
+            case HTML_UNESCAPE:
+                return HtmlUnescapeFilter.process(qa);
             case GENERAL_STOPWORDS_REMOVAL:
                 return GeneralStopwordsRemovalFilter.process(qa);
             case SPECIALIZED_STOPWORDS_REMOVAL:
