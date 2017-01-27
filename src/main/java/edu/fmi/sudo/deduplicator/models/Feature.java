@@ -62,7 +62,7 @@ public abstract class Feature {
         df.setRoundingMode(RoundingMode.CEILING);
 
         return values.stream()
-                .map(v -> diff == 0 ? 0 : ((v - mean) / diff + 0.5))
+                .map(v -> diff == 0 ? 0 : ((v - mean) / diff))
                 .map(v -> df.format(v))
                 .collect(Collectors.toList());
     }

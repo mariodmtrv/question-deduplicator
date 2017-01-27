@@ -15,10 +15,12 @@ public class FeatureVector {
     TrainDataLabel labelFeature;
     boolean isTrain;
     private QuestionAnswers qa;
+    Integer qaNo;
 
-    public FeatureVector(QuestionAnswers qa, boolean isTrain) {
+    public FeatureVector(QuestionAnswers qa, boolean isTrain, Integer qaNo) {
         this.isTrain = isTrain;
         this.qa = qa;
+        this.qaNo = qaNo;
         this.vectorMetadata = new VectorMetadataFeature();
         if (isTrain) {
             this.labelFeature = new TrainDataLabel();
@@ -35,15 +37,15 @@ public class FeatureVector {
             String completeVector = entryResult.toString();
             completeVector = completeVector.substring(0, completeVector.length() - 1);
             List<String> featureValues = Arrays.asList(completeVector.split(","));
-            Optional<String> reducedEntry = IntStream.range(1, featureValues.size()).mapToObj(entryId -> entryId + ":" + featureValues.get(entryId)).reduce((a, b) -> a + " " + b);
+            Optional<String> reducedEntry = IntStream.range(1, featureValues.size()).mapToObj(entryId -> entryId + ":" + featureValues.get(entryId).trim()).reduce((a, b) -> a + " " + b);
             String mappedEntry = reducedEntry.isPresent()? reducedEntry.get(): "";
 
             if (isTrain) {
-                mappedEntry = String.format("%s qid:%s %s", labelFeature.getEntryValue(index), qa.getQuestion().getId(), mappedEntry);
+                mappedEntry = String.format("%s qid:%s %s", labelFeature.getEntryValue(index), qaNo.toString(), mappedEntry);
             }
             else{
                 //indicate no preference in ranking
-                mappedEntry = String.format("%s qid:%d %s", 0, qa.getQuestion().getId(), mappedEntry);
+                mappedEntry = String.format("%s qid:%s %s", 0,  qaNo.toString(), mappedEntry);
 
             }
 
