@@ -15,10 +15,12 @@ public class FeatureVector {
     TrainDataLabel labelFeature;
     boolean isTrain;
     private QuestionAnswers qa;
+    Integer qaNo;
 
-    public FeatureVector(QuestionAnswers qa, boolean isTrain) {
+    public FeatureVector(QuestionAnswers qa, boolean isTrain, Integer qaNo) {
         this.isTrain = isTrain;
         this.qa = qa;
+        this.qaNo = qaNo;
         this.vectorMetadata = new VectorMetadataFeature();
         if (isTrain) {
             this.labelFeature = new TrainDataLabel();
@@ -39,11 +41,11 @@ public class FeatureVector {
             String mappedEntry = reducedEntry.isPresent()? reducedEntry.get(): "";
 
             if (isTrain) {
-                mappedEntry = String.format("%s qid:%s %s", labelFeature.getEntryValue(index), qa.getQuestion().getId(), mappedEntry);
+                mappedEntry = String.format("%s qid:%s %s", labelFeature.getEntryValue(index), qaNo.toString(), mappedEntry);
             }
             else{
                 //indicate no preference in ranking
-                mappedEntry = String.format("%s qid:%d %s", 0, qa.getQuestion().getId(), mappedEntry);
+                mappedEntry = String.format("%s qid:%d %s", 0,  qaNo.toString(), mappedEntry);
 
             }
 

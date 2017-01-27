@@ -51,7 +51,7 @@ public class FeatureVectorTest {
 
     @Test
     public void testMatrixGeneration() {
-        FeatureVector featureVector = new FeatureVector(qa, true);
+        FeatureVector featureVector = new FeatureVector(qa, true, 1);
         featureVector.setFeatures(features);
         featureVector.getValues();
     }
